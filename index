@@ -1,0 +1,904 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101c22">
+<meta name="description" content="115學年新竹區適性安置地圖：查看各校位置、開缺科別與名額，並比較離家與火車站的距離。">
+<title>115學年新竹區適性安置地圖</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+/* Layout: 島嶼地圖為主舞台（左），學校／群別說明卡在右；手機上下堆疊，最下方是可篩選的完整名額表 */
+:root{
+  /* 深色版面：所有觀看者都使用這一組，不隨系統切換 */
+  --bg:#101c22; --surface:#1a2b33; --fg:#f3f8f9; --muted:#bccbd0; --line:#2f4651;
+  --accent:#7fdce6; --accent-soft:#21434c; --chip:#22363f; --warm:#ffb07c;
+  --f-display:"Huninn","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  --f-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+img{max-width:100%}
+body{margin:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);line-height:1.65;font-size:15px;-webkit-font-smoothing:antialiased;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
+.wrap{max-width:1240px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+header{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:end;justify-content:space-between}
+h1{font-family:var(--f-display);font-weight:400;font-size:clamp(1.7rem,4vw,2.5rem);margin:0;line-height:1.2;text-wrap:balance}
+h1 small{display:block;font-family:var(--f-body);font-size:.85rem;color:var(--muted);letter-spacing:.06em;margin-bottom:4px}
+.notice{display:flex;gap:10px;align-items:flex-start;margin:0;padding:10px 16px;border-radius:16px;background:color-mix(in srgb,var(--warm) 16%,var(--surface));color:var(--fg);font-size:.95rem;border:1.5px solid color-mix(in srgb,var(--warm) 45%,transparent)}
+.notice svg{color:var(--warm);flex:none;margin-top:3px}
+.stats{display:flex;gap:18px;font-variant-numeric:tabular-nums}
+.stats div{display:flex;flex-direction:column}
+.stats b{font-family:var(--f-display);font-weight:400;font-size:1.6rem;line-height:1.1;color:var(--accent)}
+.stats span{font-size:.78rem;color:var(--muted)}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.search{flex:1 1 260px;display:flex;align-items:center;gap:8px;background:var(--surface);border:1.5px solid var(--line);border-radius:999px;padding:8px 14px}
+.search:focus-within{border-color:var(--accent)}
+.search input{border:0;background:transparent;color:var(--fg);font:inherit;width:100%;outline:none}
+.btn{font:inherit;font-size:.88rem;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:7px 14px;cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.btn:focus-visible,.chip:focus-visible,.row-btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:inherit;font-family:var(--f-display);font-size:.9rem;display:inline-flex;align-items:center;gap:6px;border:2px solid transparent;background:color-mix(in srgb,var(--c) 26%,var(--surface));color:var(--fg);border-radius:999px;padding:5px 12px 5px 8px;cursor:pointer}
+.chip i{width:12px;height:12px;border-radius:50%;background:var(--c);box-shadow:0 0 0 2px rgba(255,255,255,.25)}
+.chip em{font-style:normal;color:var(--muted);font-variant-numeric:tabular-nums;font-size:.78rem}
+.chip:hover{transform:translateY(-1px)}
+.chip{transition:transform .15s}
+.chip[aria-pressed="true"]{border-color:var(--c);background:var(--c);color:#fff}
+.chip[aria-pressed="true"] em{color:#fff}
+.chip[aria-pressed="true"] i{background:#fff}
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:18px;align-items:start}
+@media (max-width:900px){.stage{grid-template-columns:minmax(0,1fr)}}
+.mapbox{position:relative;border-radius:28px;overflow:hidden;background:#7fc4d6;box-shadow:0 10px 30px rgba(0,0,0,.4);border:4px solid var(--surface)}
+.mapbox svg{display:block;width:100%;height:auto;touch-action:pan-x pan-y}
+/* 全螢幕地圖：地圖單獨佔滿整個畫面 */
+.mapbox.full{position:fixed;inset:0;z-index:60;border-radius:0;border:0;box-shadow:none;background:#5fb0c9}
+.mapbox.full svg{width:100%;height:100%;touch-action:none}
+.mapbox.full .maptools{top:calc(12px + env(safe-area-inset-top,0px));left:calc(12px + env(safe-area-inset-left,0px))}
+.mapbox.full .sidectl{top:calc(12px + env(safe-area-inset-top,0px));right:calc(12px + env(safe-area-inset-right,0px))}
+.mapbox.full .phase{bottom:calc(12px + env(safe-area-inset-bottom,0px));right:calc(12px + env(safe-area-inset-right,0px))}
+.mapbox.full.has-mini .phase{display:none}
+body.lock{overflow:hidden}
+.fullpill{position:absolute;left:12px;bottom:12px;display:none;align-items:center;gap:6px;font:inherit;font-family:var(--f-display);font-size:.95rem;border:0;border-radius:999px;padding:8px 14px;background:#ff9a6b;color:#1a1410;box-shadow:0 4px 14px rgba(0,0,0,.35);cursor:pointer}
+.mapbox.full .fullpill{display:none!important}
+.coop{position:absolute;inset:0;display:grid;place-items:center;background:rgba(8,18,22,.5);color:#fff;font-family:var(--f-display);font-size:1.05rem;text-align:center;padding:24px;pointer-events:none;opacity:0;transition:opacity .25s}
+.coop.show{opacity:1}
+.mini{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom,0px));width:min(440px,calc(100% - 24px));background:rgba(20,36,43,.95);color:#f3f8f9;border-radius:20px;padding:14px 16px;box-shadow:0 8px 24px rgba(0,0,0,.45);display:flex;flex-direction:column;gap:8px}
+.mini h4{margin:0;font-family:var(--f-display);font-weight:400;font-size:1.2rem;line-height:1.3}
+.mini p{margin:0;font-size:.9rem;color:#cfdde1}
+.mini .acts{display:flex;flex-wrap:wrap;gap:8px}
+.mini .acts a,.mini .acts button{font:inherit;font-size:.88rem;text-decoration:none;border:1.5px solid #7fdce6;color:#7fdce6;background:transparent;border-radius:999px;padding:5px 12px;cursor:pointer}
+.mini .acts .primary{background:#7fdce6;color:#10232a;border-color:#7fdce6}
+@media (pointer:coarse){.fullpill{display:inline-flex}}
+.maptools{position:absolute;top:12px;left:12px;display:flex;flex-wrap:wrap;gap:2px;padding:4px;border-radius:999px;background:rgba(20,36,43,.88);box-shadow:0 4px 14px rgba(0,0,0,.35);max-width:calc(100% - 80px)}
+.seg{font:inherit;font-family:var(--f-display);font-size:.9rem;border:0;background:transparent;color:#e6f0f2;border-radius:999px;padding:5px 12px;cursor:pointer}
+.seg:hover{background:rgba(255,255,255,.1)}
+.seg[aria-pressed="true"]{background:#ff9a6b;color:#1a1410;font-weight:700}
+.sidectl{position:absolute;top:12px;right:12px;display:flex;flex-direction:column;gap:8px;align-items:center}
+.rbtn{width:40px;height:40px;border-radius:50%;border:0;background:rgba(20,36,43,.88);color:#e6f0f2;font-size:1.15rem;line-height:1;cursor:pointer;display:grid;place-items:center;box-shadow:0 4px 14px rgba(0,0,0,.35);font-family:var(--f-display)}
+.rbtn:hover{background:#21434c;color:#7fdce6}
+.rbtn[aria-pressed="true"]{background:#e8554e;color:#fff}
+@media (max-width:600px){
+  .maptools{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;max-width:calc(100% - 72px)}
+  .maptools::-webkit-scrollbar{display:none}
+  .seg{white-space:nowrap;font-size:.8rem;padding:5px 10px}
+  .chips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
+  .chip{white-space:nowrap;flex:none}
+  .rbtn,.compass{width:36px;height:36px}
+  .hint{display:none}
+}
+.seg:focus-visible,.rbtn:focus-visible{outline:3px solid #7fdce6;outline-offset:2px}
+.compass{width:40px;height:40px;border-radius:50%;background:rgba(20,36,43,.88);box-shadow:0 4px 14px rgba(0,0,0,.35);color:#e6f0f2;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;line-height:1}
+.compass span{color:#ff7a6e;font-size:.9rem}
+.phase{position:absolute;right:12px;bottom:12px;font-size:.8rem;background:rgba(20,36,43,.88);color:#e6f0f2;border-radius:999px;padding:4px 12px;border:0;box-shadow:0 4px 14px rgba(0,0,0,.35);cursor:pointer;font-family:inherit}
+.hint{position:absolute;left:12px;bottom:12px;font-size:.8rem;color:#e6f0f2;background:rgba(20,36,43,.88);border-radius:999px;padding:4px 12px;max-width:60%;transition:opacity .6s}
+.panel{background:var(--surface);border:0;box-shadow:0 10px 30px rgba(0,0,0,.3);border-radius:28px;padding:20px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.panel h2{font-family:var(--f-display);font-weight:400;font-size:1.45rem;margin:0;line-height:1.25;text-wrap:balance}
+.eyebrow{font-size:.8rem;letter-spacing:.08em;color:var(--muted)}
+.meta{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:.8rem;border-radius:8px;padding:2px 9px;background:var(--accent-soft);color:var(--fg)}
+.tag.warn{background:color-mix(in srgb,#e0582c 40%,var(--surface))}
+.dept{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 10px;align-items:center;font-size:.92rem}
+.dept .dot{width:10px;height:10px;border-radius:3px}
+.dept .bar{grid-column:2/4;height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin-bottom:6px}
+.dept .bar span{display:block;height:100%}
+.dept b{font-variant-numeric:tabular-nums;font-weight:700}
+.dept small{color:var(--muted)}
+.list{display:flex;flex-direction:column;gap:4px}
+.row-btn{font:inherit;text-align:left;display:flex;justify-content:space-between;gap:10px;align-items:center;width:100%;background:transparent;border:0;border-bottom:1px solid var(--line);color:var(--fg);padding:7px 2px;cursor:pointer}
+.row-btn:hover{color:var(--accent)}
+.row-btn span:last-child{font-variant-numeric:tabular-nums;color:var(--muted);white-space:nowrap}
+.link{color:var(--accent);font-weight:500;text-underline-offset:3px}
+.note{font-size:.9rem;color:var(--muted);margin:0}
+.tablebox{background:var(--surface);border:0;box-shadow:0 10px 30px rgba(0,0,0,.3);border-radius:28px;padding:18px 20px}
+.tablebox h3{font-family:var(--f-display);font-weight:400;font-size:1.2rem;margin:0 0 10px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:.9rem}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line)}
+th{font-size:.82rem;color:var(--muted);font-weight:500;letter-spacing:.05em}
+td.n{font-variant-numeric:tabular-nums;text-align:right}
+th.n{text-align:right}
+tr.clk{cursor:pointer}
+tr.clk:hover td{background:var(--accent-soft)}
+.homebar{background:var(--surface);border:2px dashed var(--line);border-radius:24px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.homebar.on{border-color:var(--accent)}
+.hb-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.hb-row label{font-family:var(--f-display);font-size:1.05rem;margin-right:4px}
+.hb-row select,.hb-row input{font:inherit;font-size:.9rem;color:var(--fg);background:var(--chip);border:1.5px solid var(--line);border-radius:10px;padding:7px 10px}
+.hb-row input{flex:1 1 240px;min-width:0}
+.hb-row select:focus,.hb-row input:focus{outline:none;border-color:var(--accent)}
+.homestat{font-size:.88rem;color:var(--fg)}
+.homestat b{color:var(--accent)}
+.routes{display:flex;flex-wrap:wrap;gap:8px}
+.routes a{font-size:.85rem;text-decoration:none;border:1.5px solid var(--accent);color:var(--accent);border-radius:999px;padding:5px 12px}
+.routes a:hover{background:var(--accent-soft)}
+.dist{font-size:.95rem}
+.dist b{font-family:var(--f-display);font-weight:400;font-size:1.5rem;color:var(--accent);font-variant-numeric:tabular-nums}
+.pinning svg{cursor:crosshair}
+.mapbox svg{cursor:grab}
+.mapbox.dragging svg{cursor:grabbing}
+.gdot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:1px}
+/* SVG */
+.school{cursor:pointer}
+.lbl-pill{pointer-events:none}
+.bob{transition:transform .2s ease}
+.school:hover .bob{transform:translateY(-5px)}
+.school{transition:opacity .25s,filter .25s}
+/* 選了一所學校：它放大，其他學校變灰 */
+.has-sel .school:not(.sel){opacity:.28;filter:grayscale(1)}
+.has-sel .school:not(.sel):hover{opacity:.7;filter:none}
+.school.sel .bob{transform:translateY(-6px) scale(1.45)}
+.has-sel .distline:not(.hot){opacity:.12!important}
+.cloud{animation:cloud 60s linear infinite alternate}
+@keyframes cloud{to{transform:translateX(120px)}}
+.lbl-pill .pill{fill:#3b5560;stroke:#fffaf0;stroke-width:2.5}
+.lbl-pill .pill-t{fill:#ffffff;font-family:var(--f-body);letter-spacing:.04em}
+.school.sel .pill{fill:#ff7a45}
+.school:hover .pill{fill:#0f7c8c}
+.school.dim{opacity:.22;filter:grayscale(1)}
+.school.sel .halo{opacity:1}
+.halo{opacity:0;transition:opacity .2s}
+.town{font-family:var(--f-display);fill:#a08d5c;letter-spacing:.18em;pointer-events:none;opacity:.85}
+.link-line{fill:none;stroke-width:2.5;stroke-dasharray:6 6;animation:flow 1.2s linear infinite;opacity:.9}
+@keyframes flow{to{stroke-dashoffset:-12}}
+.wave{animation:drift 9s ease-in-out infinite alternate}
+@keyframes drift{to{transform:translateX(14px)}}
+@media (prefers-reduced-motion:reduce){.link-line,.wave,.cloud{animation:none}.bob{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>115學年新竹區適性安置地圖</h1>
+    <div class="stats">
+      <div><b id="stS">22</b><span>所學校</span></div>
+      <div><b id="stD">89</b><span>個開缺科別</span></div>
+      <div><b id="stQ">577</b><span>安置名額</span></div>
+    </div>
+  </header>
+
+  <p class="notice" role="note"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 7.5v6M12 16.8v.2"/></svg><span>此為115學年開缺學校及名額，僅供參考，詳細資訊仍依簡章公告為準。</span></p>
+
+  <div class="tools">
+    <label class="search" for="q">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+      <input id="q" type="search" placeholder="搜尋學校、科別或地區，例如：餐飲、資訊、竹東" autocomplete="off">
+    </label>
+    <button class="btn" id="reset" type="button">全部顯示</button>
+  </div>
+  <section class="homebar" id="homebar" aria-label="我家位置">
+    <div class="hb-row">
+      <label for="town">我家在</label>
+      <select id="town"><option value="">選擇鄉鎮市區</option></select>
+      <button class="btn" id="pin" type="button" aria-pressed="false">在地圖上點出我家</button>
+      <button class="btn" id="clearHome" type="button" hidden>清除</button>
+    </div>
+    <div class="hb-row">
+      <input id="addr" type="text" placeholder="（選填）輸入住址，查各校路線時直接帶入 Google 地圖" autocomplete="street-address">
+    </div>
+    <p class="note" id="homeNote">先選鄉鎮，再到地圖上點出家的位置會更準。住址只存在這台裝置的瀏覽器裡，按「查路線」時才會送到 Google 地圖。</p>
+  </section>
+
+  <div class="chips" id="chips" role="group" aria-label="依群別篩選"></div>
+
+  <div class="stage">
+    <div class="mapbox">
+      <svg id="map" viewBox="0 0 1000 826" role="img" aria-label="新竹縣市高級中等學校分布地圖"></svg>
+      <div class="maptools" role="group" aria-label="地圖範圍">
+        <button class="seg" data-zoom="all" aria-pressed="true" type="button">新竹</button>
+        <button class="seg" data-zoom="city" aria-pressed="false" type="button">市區</button>
+        <button class="seg" data-zoom="zhubei" aria-pressed="false" type="button">竹北湖口</button>
+        <button class="seg" data-zoom="east" aria-pressed="false" type="button">竹東關西</button>
+        <button class="seg" data-zoom="region" aria-pressed="false" type="button">桃竹苗</button>
+      </div>
+      <div class="sidectl">
+        <div class="compass" aria-hidden="true"><span>▲</span>N</div>
+        <button class="rbtn" id="zin" type="button" aria-label="放大">＋</button>
+        <button class="rbtn" id="zout" type="button" aria-label="縮小">－</button>
+        <button class="rbtn" id="fullBtn" type="button" aria-pressed="false" aria-label="全螢幕地圖" title="全螢幕地圖"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path id="fullIco" d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+        <button class="rbtn" id="railBtn" aria-pressed="true" type="button" aria-label="顯示火車站" title="顯示／隱藏火車站"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="14" rx="4"/><path d="M5 10h14M9 21l-2-3M15 21l2-3"/><circle cx="9" cy="14" r=".6" fill="currentColor"/><circle cx="15" cy="14" r=".6" fill="currentColor"/></svg></button>
+      </div>
+      <div class="hint" id="hint">滾輪放大縮小・按住拖曳移動</div>
+      <button class="fullpill" id="fullPill" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>全螢幕看地圖</button>
+      <div class="coop" id="coop" aria-hidden="true">用兩指縮放、移動地圖<br>或按「全螢幕看地圖」</div>
+      <div class="mini" id="mini" hidden></div>
+      <button class="phase" id="phase" type="button" title="切換時段"></button>
+    </div>
+    <aside class="panel" id="panel" aria-live="polite"></aside>
+  </div>
+
+  <section class="tablebox">
+    <h3 id="tblTitle">全部開缺科別</h3>
+    <div class="scroll"><table>
+      <thead><tr><th>群別</th><th>科別</th><th>學校</th><th>地區</th><th class="n" id="thDist" hidden>離家直線</th><th class="n">名額</th><th>備註</th></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table></div>
+    <p class="note" style="margin-top:10px">資料來源：115學年度適性輔導安置簡章「安置高級中等學校」新竹區名額表（3-28～3-29頁）。地圖上的學校位置為示意，實際校址請以各校官網或 Google 地圖為準。</p>
+  </section>
+</div>
+
+<script>
+const RAW=`設計群|室內空間設計科|國立新竹高工|5|
+設計群|廣告設計科|私立義民高中|5|
+設計群|室內設計科|私立光復高中|8|
+設計群|廣告設計科|私立光復高中|8|
+設計群|多媒體設計科|私立光復高中|8|
+設計群|美術工藝科|市立香山高中|5|
+設計群|多媒體設計科|私立內思高中|3|
+電機與電子群|資訊科|國立新竹高工|5|
+電機與電子群|電機科|國立新竹高工|5|
+電機與電子群|資訊科|縣立自強高工|5|
+電機與電子群|電子科|縣立自強高工|5|
+電機與電子群|電機科|國立關西高中|3|
+電機與電子群|電機科|私立磐石高中|5|
+電機與電子群|資訊科|國立陽明交大附中|3|
+電機與電子群|資訊科|私立義民高中|8|
+電機與電子群|資訊科|私立光復高中|7|
+電機與電子群|電機科|私立光復高中|6|
+電機與電子群|資訊科|私立內思高中|3|
+電機與電子群|電子科|私立內思高中|3|
+電機與電子群|電機科|私立內思高中|3|
+機械群|板金科|國立新竹高工|3|
+機械群|製圖科|國立新竹高工|3|
+機械群|機械科|國立新竹高工|5|
+機械群|機械科|私立磐石高中|5|
+機械群|機械科|私立內思高中|3|
+學術群|綜合高中|國立新竹高商|8|
+學術群|綜合高中|私立忠信高中|18|
+學術群|綜合高中|私立內思高中|6|
+商業與管理群|國際貿易科|國立新竹高商|8|
+商業與管理群|資料處理科|國立新竹高商|5|
+商業與管理群|商業經營科|國立新竹高商|5|
+商業與管理群|資料處理科|私立磐石高中|8|
+商業與管理群|商業經營科|國立陽明交大附中|3|
+商業與管理群|商業經營科|國立關西高中|3|
+商業與管理群|商業經營科|縣立湖口高中|5|
+商業與管理群|電子商務科|私立仰德高中|10|
+商業與管理群|資料處理科|私立東泰高中|6|
+商業與管理群|資料處理科|私立義民高中|8|
+商業與管理群|商業經營科|私立曙光女中|3|限女生
+商業與管理群|資料處理科|私立光復高中|8|
+商業與管理群|資料處理科|市立香山高中|5|
+學術群|普通科|國立新竹高中|24|限男生
+學術群|普通科|國立新竹女中|23|限女生
+學術群|普通科|私立磐石高中|9|
+學術群|普通科|國立陽明交大附中|23|
+學術群|普通科|縣立湖口高中|9|
+學術群|普通科|縣立六家高中|18|
+學術群|普通科|國立關西高中|5|
+學術群|普通科|私立東泰高中|5|
+學術群|普通科|私立義民高中|2|
+學術群|普通科|國立竹科實中|6|
+學術群|普通科|市立成德高中|12|
+學術群|普通科|私立曙光女中|6|限女生
+學術群|普通科|私立光復高中|9|
+學術群|普通科|國立竹東高中|21|
+學術群|普通科|私立忠信高中|3|
+學術群|普通科|市立建功高中|15|
+學術群|普通科|市立香山高中|9|
+家政群|時尚造型科|私立仰德高中|9|
+家政群|時尚造型科|私立東泰高中|6|
+家政群|幼兒保育科|私立義民高中|3|限女生
+家政群|幼兒保育科|私立光復高中|8|
+家政群|時尚造型科|私立光復高中|8|
+家政群|照顧服務科|私立光復高中|6|
+家政群|家政科|國立關西高中|3|
+食品群|食品加工科|國立關西高中|3|
+餐旅群|餐飲管理科|國立關西高中|3|
+餐旅群|餐飲管理科|私立仰德高中|15|
+餐旅群|餐飲管理科|私立東泰高中|6|
+餐旅群|餐飲管理科|私立光復高中|14|
+外語群|應用英語科|國立新竹高商|5|
+外語群|應用日語科|私立曙光女中|3|限女生
+外語群|應用英語科|私立曙光女中|5|限女生
+外語群|應用日語科|私立光復高中|8|
+外語群|應用英語科|私立光復高中|8|
+動力機械群|汽車科|私立東泰高中|7|
+動力機械群|汽車科|私立光復高中|11|
+化工群|化工科|縣立自強高工|5|
+化工群|化工科|國立新竹高工|5|
+農業群|園藝科|國立關西高中|3|
+農業群|畜產保健科|國立關西高中|3|`;
+
+/* 島上的「群島」分類：學術群拆成普通科與綜合高中，家長比較好理解 */
+const CATS=[
+ {id:"gen",name:"普通科",c:"#2f6fdb",about:"高中課程，以升大學為主要方向，三年都在學國英數社自。"},
+ {id:"comp",name:"綜合高中",c:"#7a5ce0",about:"高一先試探，高二再選學術學程或專門學程，適合還在找方向的孩子。"},
+ {id:"des",name:"設計群",c:"#d9468f",about:"室內、廣告、多媒體與美術工藝，重視手作與電腦繪圖。"},
+ {id:"ee",name:"電機與電子群",c:"#e89a0c",about:"資訊、電子、電機，學程式、電路與配線實作。"},
+ {id:"mech",name:"機械群",c:"#5f7383",about:"機械加工、製圖、板金，操作機台與繪製工程圖。"},
+ {id:"auto",name:"動力機械群",c:"#a0522d",about:"汽車科，學引擎、底盤與車輛檢修。"},
+ {id:"chem",name:"化工群",c:"#12a39a",about:"化工科，學化學實驗與工廠製程操作。"},
+ {id:"biz",name:"商業與管理群",c:"#2e9e4f",about:"資料處理、商業經營、國貿、電商，學會計、電腦與行銷。"},
+ {id:"lang",name:"外語群",c:"#e0582c",about:"應用英語、應用日語，重視聽說讀寫與商務溝通。"},
+ {id:"home",name:"家政群",c:"#b94fc4",about:"時尚造型、幼保、照顧服務、家政，重視服務與照顧技能。"},
+ {id:"hosp",name:"餐旅群",c:"#d13b3b",about:"餐飲管理科，學中西餐、烘焙與餐廳服務。"},
+ {id:"food",name:"食品群",c:"#b49a12",about:"食品加工科，學食品製作、保存與檢驗。"},
+ {id:"agri",name:"農業群",c:"#5a8f29",about:"園藝、畜產保健，學植物栽培與動物照顧。"}
+];
+const catOf=(g,d)=>g==="學術群"?(d==="綜合高中"?"comp":"gen"):CATS.find(c=>c.name===g).id;
+const CAT=Object.fromEntries(CATS.map(c=>[c.id,c]));
+
+/* 學校位置（約略座標）；approx 代表尚待確認 */
+const SCHOOLS={
+ "國立新竹高工":{lat:24.809396,lng:120.982961,town:"新竹市東區"},
+ "國立新竹高商":{lat:24.797253,lng:120.986323,town:"新竹市東區"},
+ "國立新竹高中":{lat:24.794800,lng:120.981600,town:"新竹市東區"},
+ "國立新竹女中":{lat:24.805570,lng:120.975280,town:"新竹市東區"},
+ "私立曙光女中":{lat:24.811342,lng:120.973089,town:"新竹市北區"},
+ "市立成德高中":{lat:24.790488,lng:120.953228,town:"新竹市東區"},
+ "市立建功高中":{lat:24.798300,lng:121.001260,town:"新竹市東區"},
+ "私立光復高中":{lat:24.797370,lng:120.993920,town:"新竹市東區"},
+ "國立竹科實中":{lat:24.778070,lng:121.016460,town:"新竹市東區（園區）"},
+ "私立磐石高中":{lat:24.810280,lng:120.956560,town:"新竹市北區"},
+ "市立香山高中":{lat:24.784782,lng:120.930153,town:"新竹市香山區"},
+ "國立陽明交大附中":{lat:24.836327,lng:121.003833,town:"新竹縣竹北市"},
+ "縣立六家高中":{lat:24.820826,lng:121.032315,town:"新竹縣竹北市"},
+ "私立仰德高中":{lat:24.881604,lng:121.004633,town:"新竹縣新豐鄉"},
+ "縣立湖口高中":{lat:24.897430,lng:121.046040,town:"新竹縣湖口鄉",tag:"新校區"},
+ "私立內思高中":{lat:24.828870,lng:121.083350,town:"新竹縣新埔鎮"},
+ "私立忠信高中":{lat:24.881391,lng:121.002075,town:"新竹縣新豐鄉"},
+ "私立義民高中":{lat:24.838280,lng:121.003920,town:"新竹縣竹北市"},
+ "國立關西高中":{lat:24.790430,lng:121.186000,town:"新竹縣關西鎮"},
+ "國立竹東高中":{lat:24.732110,lng:121.087740,town:"新竹縣竹東鎮"},
+ "私立東泰高中":{lat:24.710960,lng:121.098970,town:"新竹縣竹東鎮"},
+ "縣立自強高工":{lat:24.746010,lng:121.084710,town:"新竹縣竹東鎮",tag:"116學年預計新招"},
+ "縣立竹北實中":{lat:24.840039,lng:120.995634,town:"新竹縣竹北市",tag:"116學年新設",pending:true}
+};
+
+const ROWS=RAW.trim().split("\n").map(l=>{const[g,d,s,n,note]=l.split("|");return{g,d,s,n:+n,note:note||"",cat:catOf(g,d)}});
+const SC=Object.keys(SCHOOLS).map(name=>{
+  const rows=ROWS.filter(r=>r.s===name);
+  const sh=SCHOOLS[name];
+  return{name,short:name.replace(/^(國立|私立|市立|縣立)/,""),type:name.slice(0,2),...sh,rows,total:rows.reduce((a,r)=>a+r.n,0)};
+});
+const BYNAME=Object.fromEntries(SC.map(s=>[s.name,s]));
+
+const STATIONS_RAW_FOR_TREES=[[24.922,121.056],[24.903,121.044],[24.869,120.996],[24.839,121.009],[24.809,120.984],[24.802,120.972],[24.787,120.928],[24.763,120.914],[24.807,121.003],[24.788,121.022],[24.781,121.031],[24.807,121.039],[24.778,121.056],[24.748,121.083],[24.738,121.095],[24.720,121.118],[24.721,121.136],[24.717,121.155],[24.716,121.167],[24.705,121.182]].map(([lat,lng])=>({lat,lng}));
+/* 各校官方網站（查不到正式網址的學校，改用搜尋連結） */
+const SITES={"國立新竹高工":"https://www.hcvs.hc.edu.tw","國立新竹高商":"https://www.hccvs.hc.edu.tw","國立新竹高中":"https://www.hchs.hc.edu.tw",
+ "國立新竹女中":"https://www.hgsh.hc.edu.tw","私立曙光女中":"https://www.sggs.hc.edu.tw","市立成德高中":"https://www.cdjh.hc.edu.tw",
+ "市立建功高中":"https://www.cksh.hc.edu.tw","私立光復高中":"https://www.kfsh.hc.edu.tw","國立竹科實中":"https://www.nehs.hc.edu.tw",
+ "私立磐石高中":"https://www.sphs.hc.edu.tw","市立香山高中":"https://www.hhjh.hc.edu.tw","國立陽明交大附中":"https://www.cphs.nycu.edu.tw/home",
+ "縣立六家高中":"https://www.ljsh.hcc.edu.tw","私立仰德高中":"https://www.ydvs.hcc.edu.tw/","私立內思高中":"https://www.savs.hcc.edu.tw/",
+ "私立忠信高中":"https://www.chhs.hcc.edu.tw","私立義民高中":"https://www.ymsh.hcc.edu.tw","國立關西高中":"https://www.khsh.hcc.edu.tw/",
+ "國立竹東高中":"https://www.ctsh.hcc.edu.tw","私立東泰高中":"https://www.ttsh.hcc.edu.tw"};
+const FULLNAME={"縣立湖口高中":"新竹縣立湖口高級中學","縣立自強高工":"新竹縣立自強工業高級中等學校","縣立竹北實中":"新竹縣立竹北實驗高級中學"};
+const siteOf=n=>SITES[n]||`https://www.google.com/search?q=${encodeURIComponent((FULLNAME[n]||n)+" 官網")}`;
+/* 圓圈中央的兩字簡稱 */
+const ABBR={"國立新竹高工":"竹工","國立新竹高商":"竹商","國立新竹高中":"竹中","國立新竹女中":"竹女","私立曙光女中":"曙光","市立成德高中":"成德","市立建功高中":"建功","私立光復高中":"光復","國立竹科實中":"實中","私立磐石高中":"磐石","市立香山高中":"香山","國立陽明交大附中":"附中","縣立六家高中":"六家","私立仰德高中":"仰德","縣立湖口高中":"湖口","私立內思高中":"內思","私立忠信高中":"忠信","私立義民高中":"義民","國立關西高中":"關西","國立竹東高中":"竹東","私立東泰高中":"東泰","縣立自強高工":"自強","縣立竹北實中":"北實"};
+/* 投影：經度 120.86–121.26、緯度 24.66–24.96 */
+const LNG0=120.86,LAT1=24.96,KX=2500,KY=2753;
+const P=(lng,lat)=>[(lng-LNG0)*KX,(LAT1-lat)*KY];
+const NS="http://www.w3.org/2000/svg";
+const el=(t,a={},p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e};
+const smooth=pts=>{ // 封閉 Catmull-Rom 平滑曲線
+  const n=pts.length;let d=`M${pts[0][0]},${pts[0][1]}`;
+  for(let i=0;i<n;i++){const p0=pts[(i-1+n)%n],p1=pts[i],p2=pts[(i+1)%n],p3=pts[(i+2)%n];
+    d+=`C${p1[0]+(p2[0]-p0[0])/6},${p1[1]+(p2[1]-p0[1])/6} ${p2[0]-(p3[0]-p1[0])/6},${p2[1]-(p3[1]-p1[1])/6} ${p2[0]},${p2[1]}`}
+  return d+"Z"};
+const line=pts=>pts.map((p,i)=>(i?"L":"M")+p[0]+","+p[1]).join("");
+
+const svg=document.getElementById("map");
+/* 時段：依照現在時間決定海與光線 */
+const PHASES=[
+ {key:"dawn",label:"清晨的群島",sea1:"#f6c9a8",sea2:"#86bfd4",tint:"rgba(255,180,140,.12)"},
+ {key:"day",label:"白天的群島",sea1:"#9fd8e6",sea2:"#5fb0c9",tint:"rgba(255,255,255,0)"},
+ {key:"dusk",label:"黃昏的群島",sea1:"#f4a77a",sea2:"#6a7fb0",tint:"rgba(255,120,60,.14)"},
+ {key:"night",label:"夜晚的群島",sea1:"#2b3f6b",sea2:"#16223d",tint:"rgba(20,30,70,.38)"}];
+const h=new Date().getHours();
+let phaseIdx=h>=5&&h<8?0:h>=8&&h<16?1:h>=16&&h<19?2:3;
+
+const defs=el("defs",{},svg);
+const sg=el("radialGradient",{id:"sea",cx:"30%",cy:"20%",r:"90%"},defs);
+const s1=el("stop",{offset:"0%"},sg),s2=el("stop",{offset:"100%"},sg);
+const lg=el("linearGradient",{id:"landg",x1:0,y1:0,x2:1,y2:1},defs);
+el("stop",{offset:"0%","stop-color":"#f1e5c4"},lg);el("stop",{offset:"100%","stop-color":"#e6d4a4"},lg);
+const sh=el("filter",{id:"sh",x:"-20%",y:"-20%",width:"140%",height:"140%"},defs);
+el("feDropShadow",{dx:0,dy:6,stdDeviation:6,"flood-color":"#20424d","flood-opacity":.28},sh);
+
+const world=el("g",{},svg);
+el("rect",{x:-2000,y:-2000,width:5000,height:5000,fill:"url(#sea)"},world);
+// 海浪（只放在西側海面）
+const waves=el("g",{class:"wave",opacity:.5},world);
+[[-80,-120],[-200,60],[-60,260],[-300,380],[-150,560],[-420,720],[-280,900],[-520,1050],[-120,-300],[-380,180]].forEach(([x,y])=>{
+  el("path",{d:`M${x},${y} q10,-8 20,0 t20,0 t20,0`,fill:"none",stroke:"#ffffff","stroke-width":2.2,"stroke-linecap":"round"},waves)});
+
+// 陸地：新竹在中央，北邊長出桃園、南邊長出苗栗
+const LAND=[[121.55,25.20],[121.22,25.14],[121.14,25.10],[121.08,25.055],[121.04,25.01],[121.02,24.975],
+ [120.995,24.93],[120.978,24.90],[120.968,24.868],[120.95,24.852],[120.928,24.848],[120.915,24.825],[120.905,24.795],[120.898,24.765],[120.885,24.735],[120.872,24.705],
+ [120.85,24.675],[120.815,24.64],[120.78,24.605],[120.745,24.565],[120.71,24.515],[120.675,24.46],[120.64,24.40],[120.62,24.30],[121.55,24.30]].map(p=>P(p[0],p[1]));
+const landG=el("g",{filter:"url(#sh)"},world);
+el("path",{d:smooth(LAND),fill:"none",stroke:"#ffffff","stroke-width":22,opacity:.35,"stroke-linejoin":"round"},world);
+el("path",{d:smooth(LAND),fill:"none",stroke:"#ffffff","stroke-width":10,opacity:.55,"stroke-linejoin":"round"},world);
+el("path",{d:smooth(LAND),fill:"url(#landg)",stroke:"#f7e7b8","stroke-width":3},landG);
+el("clipPath",{id:"landclip"},defs).appendChild(el("path",{d:smooth(LAND)}));
+// 縣市界
+const B_TY=[[121.02,24.968],[121.06,24.952],[121.11,24.932],[121.17,24.906],[121.22,24.876],[121.26,24.835],[121.30,24.80],[121.40,24.76],[121.6,24.72]];
+const B_ML=[[120.872,24.700],[120.92,24.676],[121.0,24.664],[121.08,24.658],[121.15,24.64],[121.25,24.60],[121.6,24.55]];
+const nb=el("g",{"clip-path":"url(#landclip)"},world);
+// 鄰近縣市稍微淡一點，讓新竹成為主角
+el("path",{d:line([...B_TY,[121.6,25.4],[120.8,25.4]].map(p=>P(p[0],p[1])))+"Z",fill:"#f3eedf",opacity:.8},nb);
+el("path",{d:line([...B_ML,[121.6,24.1],[120.4,24.1]].map(p=>P(p[0],p[1])))+"Z",fill:"#f3eedf",opacity:.8},nb);
+// 新竹縣市的草地
+el("path",{d:line([...B_TY,...[...B_ML].reverse(),[120.6,24.70],[120.6,24.968]].map(p=>P(p[0],p[1])))+"Z",fill:"#cfe6b0",opacity:.55},nb);
+[B_TY,B_ML].forEach(b=>el("path",{d:line(b.map(p=>P(p[0],p[1]))),fill:"none",stroke:"#c9b27a","stroke-width":2,"stroke-dasharray":"2 7","stroke-linecap":"round",opacity:.9},nb));
+const nbLbl=el("g",{"pointer-events":"none"},world);
+[["桃園市",121.16,25.0],["苗栗縣",120.93,24.56]].forEach(([t,lng,lat])=>{const[x,y]=P(lng,lat);
+  el("text",{x,y,"text-anchor":"middle","font-size":30,fill:"#c4ae78",opacity:.75,style:"font-family:var(--f-display);letter-spacing:.3em"},nbLbl).textContent=t});
+// 新竹市範圍
+const CITY=[[120.926,24.845],[120.955,24.836],[120.98,24.821],[121.005,24.808],[121.03,24.792],[121.036,24.775],[121.0,24.752],[120.955,24.742],[120.91,24.748],[120.902,24.775],[120.912,24.815]].map(p=>P(p[0],p[1]));
+el("path",{d:smooth(CITY),fill:"#f5e8c3",stroke:"#c9a95e","stroke-width":2,"stroke-dasharray":"7 6",opacity:.95},world);
+// 山（東側）
+const mts=el("g",{},world);
+[[121.20,24.74,1],[121.15,24.72,.8],[121.22,24.80,.9],[121.13,24.77,.6],[121.19,24.85,.7],[121.06,24.70,.6],[121.0,24.70,.5],[121.05,24.60,.9],[120.98,24.585,.7],[121.12,24.62,1],[120.90,24.52,.6],[121.30,24.78,.9],[121.28,24.70,1]].forEach(([lng,lat,s])=>{
+  const[x,y]=P(lng,lat);const w=46*s,hh=38*s;
+  el("path",{d:`M${x-w},${y} C${x-w*.7},${y-hh*1.3} ${x+w*.7},${y-hh*1.3} ${x+w},${y}Z`,fill:"#b5d998",stroke:"#97c27a","stroke-width":2,"stroke-linejoin":"round"},mts);
+  el("path",{d:`M${x-w*.32},${y-hh*.84} C${x-w*.2},${y-hh*1.02} ${x+w*.2},${y-hh*1.02} ${x+w*.32},${y-hh*.84} C${x+w*.12},${y-hh*.76} ${x-w*.12},${y-hh*.76} ${x-w*.32},${y-hh*.84}Z`,fill:"#ffffff",opacity:.85},mts)});
+// 河流：頭前溪、鳳山溪
+const RIV=[[[121.12,24.735],[121.10,24.752],[121.06,24.775],[121.03,24.795],[121.005,24.812],[120.98,24.825],[120.955,24.84],[120.932,24.849]],
+           [[121.17,24.81],[121.12,24.825],[121.07,24.835],[121.02,24.845],[120.98,24.852],[120.955,24.853]]];
+RIV.forEach(r=>el("path",{d:line(r.map(p=>P(p[0],p[1]))),fill:"none",stroke:"#9fd3e6","stroke-width":6,"stroke-linecap":"round","stroke-linejoin":"round",opacity:.95},world));
+// 小樹（避開學校與車站，散在陸地上）
+const treeG=el("g",{"pointer-events":"none"},world);
+const landProbe=landG.querySelector("path");
+(function(){let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+  const avoid=[...Object.values(SCHOOLS),...STATIONS_RAW_FOR_TREES].map(o=>P(o.lng,o.lat));
+  let made=0,tries=0;
+  while(made<70&&tries<2000){tries++;const x=-200+rnd()*1400,y=-250+rnd()*1300;
+    let inside=true;try{inside=landProbe.isPointInFill(new DOMPoint(x,y))}catch(e){inside=false}
+    if(!inside)continue;if(avoid.some(([ax,ay])=>Math.hypot(ax-x,ay-y)<34))continue;
+    const s=.7+rnd()*.6,c=rnd()<.5?"#8fca7a":"#a5d48a";
+    el("rect",{x:x-1.3*s,y:y,width:2.6*s,height:6*s,rx:1,fill:"#b08a5a"},treeG);
+    el("circle",{cx:x,cy:y-2*s,r:6.5*s,fill:c},treeG);
+    el("circle",{cx:x-2*s,cy:y-4*s,r:2*s,fill:"#ffffff",opacity:.35},treeG);made++}})();
+// 雲
+const cloudG=el("g",{"pointer-events":"none",class:"cloud",opacity:.9},world);
+[[-260,-60,1],[-120,330,.8],[-420,620,1.1],[-200,900,.9],[60,-260,.8]].forEach(([x,y,k])=>{
+  const g=el("g",{transform:`translate(${x},${y}) scale(${k})`},cloudG);
+  el("ellipse",{cx:0,cy:6,rx:44,ry:10,fill:"rgba(40,90,110,.12)"},g);
+  [[-22,0,16],[0,-8,21],[22,0,15],[0,2,18]].forEach(([cx,cy,r])=>el("circle",{cx,cy,r,fill:"#ffffff"},g))});
+// 地名
+const TOWNS=[["新豐",120.99,24.918],["湖口",121.055,24.905],["竹北",121.005,24.852],["新埔",121.09,24.85],["關西",121.18,24.775],["竹東",121.075,24.712],["寶山",121.03,24.745],["新竹市",120.94,24.812],["香山",120.915,24.77],["芎林",121.11,24.785],
+ ["觀音",121.08,25.035],["新屋",121.105,24.972],["楊梅",121.146,24.914],["龍潭",121.215,24.862],["竹南",120.873,24.678],["頭份",120.915,24.668],["後龍",120.79,24.612],["苗栗市",120.82,24.565],["三灣",120.95,24.64]];
+const townG=el("g",{},world);
+TOWNS.forEach(([t,lng,lat])=>{const[x,y]=P(lng,lat);el("text",{x,y,class:"town","font-size":16,"text-anchor":"middle"},townG).textContent=t});
+// 台灣海峽標示
+el("text",{x:-160,y:400,class:"town","font-size":20,fill:"#ffffff",opacity:.8,"writing-mode":"tb"},world).textContent="台灣海峽";
+// 彩蛋：沿岸巡航的小船
+const boatPath=line([[121.02,25.06],[120.99,25.0],[120.96,24.94],[120.93,24.875],[120.87,24.83],[120.86,24.77],[120.84,24.70],[120.79,24.65],[120.73,24.59]].map(p=>P(p[0],p[1])));
+el("path",{id:"boatpath",d:boatPath,fill:"none"},world);
+const boat=el("g",{style:"cursor:pointer"},world);
+el("path",{d:"M-14,0 L14,0 L9,8 L-9,8Z",fill:"#7a4a2a"},boat);
+el("path",{d:"M0,-20 L0,0 M0,-20 L12,-4 L0,-4Z",fill:"#fff",stroke:"#555","stroke-width":1.5},boat);
+el("animateMotion",{dur:"60s",repeatCount:"indefinite",rotate:"0"},boat).appendChild(el("mpath",{href:"#boatpath"}));
+boat.addEventListener("click",e=>{e.stopPropagation();showBoat()});
+
+const tintR=el("rect",{x:-2000,y:-2000,width:5000,height:5000,fill:"transparent","pointer-events":"none"},world);
+/* ===== 鐵路與車站 ===== */
+const STATIONS=[
+ // 名稱, 緯度, 經度, 主要站（座標取自維基百科各車站條目）
+ ["北湖",24.922222,121.055722,0],["湖口",24.902889,121.044083,0],["新豐",24.869194,120.996444,0],["竹北",24.839083,121.009111,1],["北新竹",24.808611,120.983778,0],
+ ["新竹",24.801600,120.971600,1],["三姓橋",24.787306,120.928417,0],["香山",24.763140,120.913910,0],
+ ["千甲",24.806722,121.003194,0],["新莊",24.788167,121.021694,0],["竹中",24.781306,121.031222,0],["六家・高鐵",24.807111,121.039278,0],
+ ["上員",24.777861,121.055722,0],["榮華",24.748472,121.083028,0],["竹東",24.738194,121.094722,1],["橫山",24.720361,121.117694,0],
+ ["九讚頭",24.720611,121.136194,0],["合興",24.716556,121.154556,0],["富貴",24.715556,121.167444,0],["內灣",24.705417,121.182472,0]];
+const ST=Object.fromEntries(STATIONS.map(s=>[s[0],{name:s[0],lat:s[1],lng:s[2],major:s[3]}]));
+const RAILS=[
+ [[121.30,24.955],[121.146,24.914],[121.075,24.945],"北湖","湖口","新豐","竹北","北新竹","新竹","三姓橋","香山",[120.881,24.686],[120.84,24.645],[120.80,24.61],[120.82,24.565],[120.85,24.45]], // 西部幹線（延伸到楊梅、竹南、苗栗）
+ ["新竹","北新竹","千甲","新莊","竹中","上員","榮華","竹東","橫山","九讚頭","合興","富貴","內灣"], // 內灣線
+ ["竹中","六家・高鐵"] // 六家線
+];
+const railG=el("g",{"pointer-events":"none"},svg);
+RAILS.forEach(r=>{const pts=r.map(p=>Array.isArray(p)?P(p[0],p[1]):P(ST[p].lng,ST[p].lat));const d=line(pts);
+  el("path",{d,fill:"none",stroke:"#9c7b5b","stroke-width":4,"stroke-linecap":"round","stroke-linejoin":"round","vector-effect":"non-scaling-stroke"},railG);
+  el("path",{d,fill:"none",stroke:"#fff6e6","stroke-width":1.6,"stroke-dasharray":"5 6","vector-effect":"non-scaling-stroke"},railG)});
+const stationG=el("g",{"pointer-events":"none"},svg);
+STATIONS.forEach(([n])=>{const s=ST[n];[s.x,s.y]=P(s.lng,s.lat);
+  const g=el("g",{},stationG);s.g=g;
+  el("circle",{r:10,fill:"#ffffff",stroke:"#e8554e","stroke-width":2.2},g);
+  el("rect",{x:-5,y:-6,width:10,height:9,rx:2.5,fill:"#e8554e"},g);
+  el("rect",{x:-3.4,y:-4.4,width:6.8,height:3,rx:1,fill:"#ffffff"},g);
+  el("circle",{cx:-2.6,cy:5.2,r:1.4,fill:"#e8554e"},g);el("circle",{cx:2.6,cy:5.2,r:1.4,fill:"#e8554e"},g);
+  const t=el("text",{x:0,y:-15,"text-anchor":"middle","font-size":12.5,"font-weight":700,fill:"#c0443e",style:"paint-order:stroke;stroke:#fffaf0;stroke-width:3.5px;stroke-linejoin:round;font-family:var(--f-display)"},g);
+  t.textContent=n+(n.includes("高鐵")?"站":"站");s.lbl=t});
+const nearestStation=(lat,lng)=>{let b=null;STATIONS.forEach(([n])=>{const s=ST[n];const d=geoKm(lat,lng,s.lat,s.lng);if(!b||d<b.d)b={s,d}});return b};
+function geoKm(a1,o1,a2,o2){const R=6371,r=Math.PI/180,dA=(a2-a1)*r,dO=(o2-o1)*r;const x=Math.sin(dA/2)**2+Math.cos(a1*r)*Math.cos(a2*r)*Math.sin(dO/2)**2;return 2*R*Math.asin(Math.sqrt(x))}
+let showRail=true;
+
+const ringG=el("g",{"pointer-events":"none"},svg);
+const linkG=el("g",{},svg);
+const homeLineG=el("g",{"pointer-events":"none"},svg);
+const schoolG=el("g",{},svg);
+svg.appendChild(stationG); // 車站放在學校上層，避免被圓圈蓋住
+const houseG=el("g",{"pointer-events":"none"},svg);
+
+function applyPhase(){const p=PHASES[phaseIdx];s1.setAttribute("stop-color",p.sea1);s2.setAttribute("stop-color",p.sea2);tintR.setAttribute("fill",p.tint);
+  document.getElementById("phase").textContent="此刻："+p.label+"　↻"}
+document.getElementById("phase").onclick=()=>{phaseIdx=(phaseIdx+1)%4;applyPhase()};
+applyPhase();
+
+/* 學校標記：甜甜圈色環顯示各群名額比例，中間是總名額 */
+const nodes={};
+SC.forEach(s=>{
+  const[x,y]=P(s.lng,s.lat);s.x=x;s.y=y;
+  const g=el("g",{class:"school",tabindex:0,role:"button","aria-label":s.pending?`${s.name}，尚未確定是否開缺`:`${s.name}，${s.total} 個名額`},schoolG);
+  const inner=el("g",{class:"bob"},g);
+  const r=15+Math.sqrt(s.total)*1.2;s.r=r;
+  el("circle",{class:"halo",r:r+9,fill:"none",stroke:"#ffffff","stroke-width":4},inner);
+  el("ellipse",{cx:0,cy:r*.75,rx:r*.95,ry:r*.32,fill:"rgba(60,45,10,.25)"},inner);
+  el("circle",{r:r+5,fill:"#ffffff"},inner);
+  const C=2*Math.PI*r;let off=0;
+  const bycat={};s.rows.forEach(rw=>bycat[rw.cat]=(bycat[rw.cat]||0)+rw.n);s.bycat=bycat;
+  CATS.forEach(c=>{if(!bycat[c.id])return;const len=bycat[c.id]/s.total*C;
+    el("circle",{r,fill:"none",stroke:c.c,"stroke-width":7,"stroke-dasharray":`${len} ${C-len}`,"stroke-dashoffset":-off,transform:"rotate(-90)"},inner);off+=len});
+  if(s.pending)el("circle",{r,fill:"none",stroke:"#9fb3ba","stroke-width":4,"stroke-dasharray":"5 4"},inner);
+  el("circle",{r:r-4.5,fill:"#fffaf0"},inner);
+  el("text",{y:5,"text-anchor":"middle","font-size":13,"font-weight":700,fill:"#2a2a22",style:"pointer-events:none;font-family:var(--f-display)"},inner).textContent=ABBR[s.name];
+  const lbl=el("g",{class:"lbl-pill"},inner);
+  const lw=s.short.length*15+18;
+  el("rect",{x:-lw/2,y:r+6,width:lw,height:24,rx:12,class:"pill"},lbl);
+  el("text",{y:r+23,"text-anchor":"middle","font-size":15,"font-weight":700,class:"pill-t"},lbl).textContent=s.short;
+  nodes[s.name]={g,inner,lbl};
+  g.addEventListener("click",e=>{e.stopPropagation();if(dragGuard())return;if(pinMode){placePin(e);return}selectSchool(s.name)});
+  g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();selectSchool(s.name)}});
+  g.addEventListener("mouseenter",()=>{hover=s.name;relabel()});
+  g.addEventListener("mouseleave",()=>{hover=null;relabel()});
+});
+
+/* 視野縮放 */
+const VB0=[-80,-110,1160,958];
+const box=(a,b,c,d)=>{const[x1,y1]=P(a,d),[x2,y2]=P(b,c);const w=x2-x1,hh=y2-y1;const asp=826/1000;
+  let W=w,H=hh;if(H/W<asp)H=W*asp;else W=H/asp;return[x1+w/2-W/2,y1+hh/2-H/2,W,H]};
+const VIEWS={all:VB0,region:box(120.70,121.32,24.50,25.07),city:box(120.905,121.02,24.765,24.825),zhubei:box(120.95,121.07,24.80,24.92),east:box(121.04,121.21,24.70,24.86)};
+let vb=[...VB0],anim;svg.setAttribute("viewBox",VB0.join(" "));
+function setView(key){
+  document.querySelectorAll("[data-zoom]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.zoom===key));
+  const from=[...vb],to=VIEWS[key];const t0=performance.now();cancelAnimationFrame(anim);
+  const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const step=t=>{let k=reduce?1:Math.min(1,(t-t0)/550);k=1-Math.pow(1-k,3);
+    vb=from.map((v,i)=>v+(to[i]-v)*k);svg.setAttribute("viewBox",vb.join(" "));scaleNodes();if(k<1)anim=requestAnimationFrame(step)};
+  anim=requestAnimationFrame(step);
+  document.getElementById("hint").hidden=key!=="all";
+}
+/* 滑鼠滾輪在游標處縮放、拖曳平移、＋／−按鈕 */
+const MINW=140,MAXW=1800;
+function clampVB(v){let[x,y,w]=v;w=Math.min(MAXW,Math.max(MINW,w));const h=w*.826;
+  const X0=-650,X1=1450,Y0=-500,Y1=1350;
+  x=w>=X1-X0?(X0+X1-w)/2:Math.min(X1-w,Math.max(X0,x));y=h>=Y1-Y0?(Y0+Y1-h)/2:Math.min(Y1-h,Math.max(Y0,y));return[x,y,w,h]}
+function zoomAt(px,py,f){cancelAnimationFrame(anim);
+  const w=Math.min(MAXW,Math.max(MINW,vb[2]*f)),r=w/vb[2];
+  vb=clampVB([px-(px-vb[0])*r,py-(py-vb[1])*r,w]);
+  svg.setAttribute("viewBox",vb.join(" "));scaleNodes();
+  document.querySelectorAll("[data-zoom]").forEach(b=>b.setAttribute("aria-pressed",false));
+  document.getElementById("hint").hidden=true}
+const toSvg=(cx,cy)=>{const pt=svg.createSVGPoint();pt.x=cx;pt.y=cy;return pt.matrixTransform(svg.getScreenCTM().inverse())};
+svg.addEventListener("wheel",e=>{e.preventDefault();const p=toSvg(e.clientX,e.clientY);
+  const d=e.deltaMode===1?e.deltaY*30:e.deltaY;zoomAt(p.x,p.y,Math.exp(Math.max(-200,Math.min(200,d))*.0022))},{passive:false});
+document.getElementById("zin").onclick=()=>zoomAt(vb[0]+vb[2]/2,vb[1]+vb[3]/2,.6);
+document.getElementById("zout").onclick=()=>zoomAt(vb[0]+vb[2]/2,vb[1]+vb[3]/2,1/.6);
+let drag=null,guardUntil=0;const dragGuard=()=>Date.now()<guardUntil;
+const pxPerUnit=()=>svg.getScreenCTM().a;
+svg.addEventListener("pointerdown",e=>{if(e.pointerType!=="mouse"||e.button!==0)return;drag={x:e.clientX,y:e.clientY,vb:[...vb],moved:false,ppu:pxPerUnit()}});
+window.addEventListener("pointermove",e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;
+  if(!drag.moved&&Math.hypot(dx,dy)<5)return;
+  if(!drag.moved){drag.moved=true;cancelAnimationFrame(anim);document.querySelector(".mapbox").classList.add("dragging")}
+  const k=1/drag.ppu;vb=clampVB([drag.vb[0]-dx*k,drag.vb[1]-dy*k,drag.vb[2]]);
+  svg.setAttribute("viewBox",vb.join(" "));scaleNodes();
+  document.querySelectorAll("[data-zoom]").forEach(b=>b.setAttribute("aria-pressed",false))});
+window.addEventListener("pointerup",()=>{if(!drag)return;if(drag.moved)guardUntil=Date.now()+60;
+  drag=null;document.querySelector(".mapbox").classList.remove("dragging")});
+document.querySelectorAll("[data-zoom]").forEach(b=>b.onclick=()=>setView(b.dataset.zoom));
+
+/* ===== 手機手勢：兩指縮放與移動；全螢幕時單指也能拖曳 ===== */
+const mapbox=document.querySelector(".mapbox");
+const isFull=()=>mapbox.classList.contains("full");
+let tg=null,coopTimer;
+const tDist=(a,b)=>Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);
+const tMid=(a,b)=>({x:(a.clientX+b.clientX)/2,y:(a.clientY+b.clientY)/2});
+function setVB(v){vb=clampVB(v);svg.setAttribute("viewBox",vb.join(" "));scaleNodes();
+  document.querySelectorAll("[data-zoom]").forEach(b=>b.setAttribute("aria-pressed",false))}
+function startPinch(e){const[a,b]=e.touches;const m=tMid(a,b);cancelAnimationFrame(anim);
+  tg={mode:"pinch",d0:tDist(a,b),vb0:[...vb],p0:toSvg(m.x,m.y),moved:true}}
+function startPan(t){tg={mode:"pan",x:t.clientX,y:t.clientY,vb0:[...vb],ppu:pxPerUnit(),moved:false}}
+svg.addEventListener("touchstart",e=>{
+  if(e.touches.length>=2){e.preventDefault();startPinch(e);coopHide()}
+  else if(e.touches.length===1&&isFull())startPan(e.touches[0]);
+  else tg=null},{passive:false});
+svg.addEventListener("touchmove",e=>{
+  if(e.touches.length>=2){
+    if(!tg||tg.mode!=="pinch")startPinch(e);
+    e.preventDefault();
+    const[a,b]=e.touches,m=tMid(a,b),f=tg.d0/Math.max(10,tDist(a,b));
+    const w=Math.min(MAXW,Math.max(MINW,tg.vb0[2]*f)),r=w/tg.vb0[2],p=tg.p0;
+    // 先以兩指中心縮放，再把那一點移回手指中間，地圖會跟著手指走
+    vb=[p.x-(p.x-tg.vb0[0])*r,p.y-(p.y-tg.vb0[1])*r,w,w*.826];svg.setAttribute("viewBox",vb.join(" "));
+    const q=toSvg(m.x,m.y);setVB([vb[0]+(p.x-q.x),vb[1]+(p.y-q.y),w]);return}
+  if(e.touches.length===1){
+    if(!isFull()){coopShow();return}
+    if(!tg||tg.mode!=="pan")startPan(e.touches[0]);
+    e.preventDefault();
+    const t=e.touches[0],dx=t.clientX-tg.x,dy=t.clientY-tg.y;
+    if(!tg.moved&&Math.hypot(dx,dy)<6)return;
+    tg.moved=true;setVB([tg.vb0[0]-dx/tg.ppu,tg.vb0[1]-dy/tg.ppu,tg.vb0[2]])}},{passive:false});
+function touchEnd(e){
+  if(tg&&tg.moved)guardUntil=Date.now()+400;
+  if(e.touches.length===1&&isFull())startPan(e.touches[0]);else if(e.touches.length===0)tg=null}
+svg.addEventListener("touchend",touchEnd);svg.addEventListener("touchcancel",touchEnd);
+// 一般模式下單指滑動地圖時，提醒用兩指或全螢幕（像 Google 地圖嵌入的做法），頁面照常捲動
+const coopEl=document.getElementById("coop");
+function coopShow(){coopEl.classList.add("show");clearTimeout(coopTimer);coopTimer=setTimeout(coopHide,1400)}
+function coopHide(){coopEl.classList.remove("show")}
+
+/* ===== 全螢幕地圖 ===== */
+const fullBtn=document.getElementById("fullBtn");
+function setFull(on){
+  mapbox.classList.toggle("full",on);document.body.classList.toggle("lock",on);
+  fullBtn.setAttribute("aria-pressed",on);fullBtn.setAttribute("aria-label",on?"離開全螢幕":"全螢幕地圖");fullBtn.title=on?"離開全螢幕":"全螢幕地圖";
+  document.getElementById("fullIco").setAttribute("d",on?"M6 6l12 12M18 6L6 18":"M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5");
+  coopHide();
+  if(on){const h=document.getElementById("hint");h.textContent=matchMedia("(pointer:coarse)").matches?"單指拖曳・兩指縮放":"滾輪放大縮小・按住拖曳移動";h.hidden=false;h.style.opacity=1;
+    setTimeout(()=>{h.style.opacity=0;setTimeout(()=>h.hidden=true,700)},2600)}
+  else mapbox.scrollIntoView({block:"center"});
+  scaleNodes();renderMini()}
+fullBtn.onclick=()=>setFull(!isFull());
+document.getElementById("fullPill").onclick=()=>setFull(true);
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&isFull())setFull(false)});
+
+/* 全螢幕時，底部的小卡顯示選到的學校或群別 */
+const miniEl=document.getElementById("mini");
+function renderMini(){
+  const show=isFull()&&(state.school||state.cat);
+  miniEl.hidden=!show;mapbox.classList.toggle("has-mini",!!show);if(!show)return;
+  if(state.school){const s=BYNAME[state.school],ns=nearestStation(s.lat,s.lng);
+    miniEl.innerHTML=`<h4>${s.name}</h4>
+      <p>${s.town}・${s.pending?"尚未確定是否開缺":`${s.rows.length} 個科別、共 ${s.total} 名`}</p>
+      <p>${home?`離家直線 ${fmtKm(km(s))}・`:""}最近車站：${ns.s.name}站（${fmtKm(ns.d)}）</p>
+      <div class="acts"><button class="primary" type="button" id="miniMore">看科別與名額</button><a href="${siteOf(s.name)}" target="_blank" rel="noopener">學校官網 ↗</a>${home?`<a href="${route(s,"transit")}" target="_blank" rel="noopener">查路線 ↗</a>`:""}</div>`}
+  else{const c=CAT[state.cat],n=new Set(ROWS.filter(matchRow).map(r=>r.s)).size;
+    miniEl.innerHTML=`<h4 style="color:${c.c}">${c.name}</h4><p>${n} 所學校開設，點有顏色的學校看細節。</p>
+      <div class="acts"><button class="primary" type="button" id="miniMore">看學校清單</button></div>`}
+  document.getElementById("miniMore").onclick=()=>{setFull(false);document.getElementById("panel").scrollIntoView({behavior:"smooth",block:"start"})}}
+document.getElementById("railBtn").onclick=e=>{showRail=!showRail;e.currentTarget.setAttribute("aria-pressed",showRail);railG.style.display=stationG.style.display=showRail?"":"none"};
+const inCity=s=>s.lng>120.95&&s.lng<121.0&&s.lat>24.785&&s.lat<24.815;
+let hover=null;
+function scaleNodes(){const k=Math.max(vb[2]/1000,.14);
+  const zoomed=vb[2]<700;
+  STATIONS.forEach(([n])=>{const s=ST[n];s.g.setAttribute("transform",`translate(${s.x},${s.y}) scale(${k*(zoomed?1:.72)})`);s.lbl.style.display=(s.major||zoomed)?"":"none"});SC.forEach(s=>nodes[s.name].g.setAttribute("transform",`translate(${s.x},${s.y}) scale(${k})`));
+  if(home){const[x,y]=P(home.lng,home.lat);houseG.setAttribute("transform",`translate(${x},${y}) scale(${k})`);
+    ringG.querySelectorAll("text").forEach(t=>t.setAttribute("font-size",13*k))}
+  relabel()}
+function relabel(){const zoomed=vb[2]<700;
+  SC.forEach(s=>{const show=zoomed||s.name===hover||s.name===state.school;nodes[s.name].lbl.style.display=show?"":"none"});
+  const k=Math.max(vb[2]/1000,.14);
+  distLabels.forEach(d=>{
+    const hot=d.s.name===hover||d.s.name===state.school;
+    d.line.classList.toggle("hot",hot);d.line.setAttribute("stroke",hot?"#ff7a45":"#ffffff");d.line.setAttribute("stroke-width",hot?3:1.4);d.line.setAttribute("opacity",hot?1:.55);
+    if(hot)homeLineG.appendChild(d.line)})}
+function setPill(s,dist){const g=nodes[s.name].lbl,t=g.querySelector("text"),r=g.querySelector("rect");
+  t.textContent=s.short;g.querySelectorAll(".pd").forEach(e=>e.remove());
+  let w=s.short.length*15+18,h=24;
+  if(dist){const d=el("text",{class:"pd",y:s.r+40,"text-anchor":"middle","font-size":12,"font-weight":700,fill:"#ffc29e",style:"font-variant-numeric:tabular-nums"},g);
+    d.textContent="離家 "+dist;w=Math.max(w,(3+dist.length)*7.5+22);h=40}
+  r.setAttribute("x",-w/2);r.setAttribute("width",w);r.setAttribute("height",h);r.setAttribute("rx",h>24?14:12)}
+/* 從我家到各校的虛線與距離標籤 */
+let distLabels=[];
+function drawHomeLines(act){
+  homeLineG.innerHTML="";distLabels=[];SC.forEach(x=>setPill(x,null));if(!home)return;
+  const[hx,hy]=P(home.lng,home.lat);const filtering=state.cat||state.q;
+  SC.forEach(s=>{if(filtering&&!act.has(s.name))return;
+    const line=el("line",{class:"distline",x1:hx,y1:hy,x2:s.x,y2:s.y,stroke:"#ffffff","stroke-width":1.4,"stroke-dasharray":"4 6","stroke-linecap":"round","vector-effect":"non-scaling-stroke",opacity:.55},homeLineG);
+    // 把距離併進校名標籤：「光復高中｜4.3 km」
+    const g=nodes[s.name].lbl;setPill(s,(km(s)<1?"<1":km(s).toFixed(1))+" km");
+    distLabels.push({s,g,line})});
+}
+
+/* 狀態與篩選 */
+const state={cat:null,q:"",school:null};
+function matchRow(r){
+  if(state.cat&&r.cat!==state.cat)return false;
+  if(state.q){const q=state.q;const s=BYNAME[r.s];
+    return (r.s+r.d+r.g+CAT[r.cat].name+s.town+(r.note||"")).includes(q)}
+  return true}
+function activeSchools(){return new Set(ROWS.filter(matchRow).map(r=>r.s))}
+
+/* ===== 我家位置與距離 ===== */
+const TOWN_PTS=[["新竹市東區",24.800,120.975],["新竹市北區",24.815,120.960],["新竹市香山區",24.790,120.925],
+ ["竹北市",24.835,121.005],["竹東鎮",24.737,121.090],["新埔鎮",24.828,121.075],["關西鎮",24.790,121.175],
+ ["湖口鄉",24.895,121.045],["新豐鄉",24.885,120.990],["芎林鄉",24.775,121.090],["寶山鄉",24.758,121.005],
+ ["橫山鄉",24.720,121.115],["北埔鄉",24.700,121.058],["峨眉鄉",24.688,121.018],["尖石鄉",24.705,121.195],["五峰鄉",24.675,121.110],
+ ["苗栗縣竹南鎮",24.686,120.873],["苗栗縣頭份市",24.688,120.913],["桃園市楊梅區",24.914,121.146],["桃園市新屋區",24.972,121.105]];
+const townSel=document.getElementById("town");
+TOWN_PTS.forEach(([n])=>{const o=document.createElement("option");o.value=n;o.textContent=n;townSel.appendChild(o)});
+let home=null,pinMode=false;
+const store={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const addrEl=document.getElementById("addr");
+const km=s=>{const R=6371,toR=Math.PI/180,dLa=(s.lat-home.lat)*toR,dLo=(s.lng-home.lng)*toR;
+  const a=Math.sin(dLa/2)**2+Math.cos(home.lat*toR)*Math.cos(s.lat*toR)*Math.sin(dLo/2)**2;return 2*R*Math.asin(Math.sqrt(a))};
+const fmtKm=d=>d<1?"不到 1 公里":d.toFixed(1)+" 公里";
+const rideMin=d=>Math.max(5,Math.round(d*1.35/28*60/5)*5); // 道路約為直線 1.35 倍、平均時速約 28 公里
+const byDist=list=>home?[...list].sort((a,b)=>km(BYNAME[a[0]])-km(BYNAME[b[0]])):list;
+const origin=()=>addrEl.value.trim()||(home?`${home.lat.toFixed(5)},${home.lng.toFixed(5)}`:"");
+const route=(s,mode)=>`https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin())}&destination=${encodeURIComponent(s.name.replace(/^(國立|私立|市立|縣立)/,"新竹 "))}&travelmode=${mode}`;
+
+function setHome(h){home=h;store.set("isle-home",h);
+  if(h&&h.town)townSel.value=h.town;drawHome();render()}
+function drawHome(){
+  ringG.innerHTML="";houseG.innerHTML="";
+  const on=!!home;document.getElementById("clearHome").hidden=!on;document.getElementById("homebar").classList.toggle("on",on);
+  document.getElementById("thDist").hidden=!on;
+  if(!on)return;
+  const[x,y]=P(home.lng,home.lat);const U=24.8; // 每公里約 24.8 地圖單位
+  [5,10,20].forEach(r=>{el("circle",{cx:x,cy:y,r:r*U,fill:"none",stroke:"#ffffff","stroke-width":2,"stroke-dasharray":"4 6",opacity:.85},ringG);
+    const t=el("text",{x:x+r*U*.71+4,y:y-r*U*.71-4,fill:"#ffffff","font-size":13,"font-weight":700,style:"paint-order:stroke;stroke:#2a4a55;stroke-width:3px"},ringG);t.textContent=r+" 公里"});
+  el("circle",{r:22,fill:"#ff7a45",opacity:.25},houseG);
+  el("path",{d:"M0,-20 L16,-6 L12,-6 L12,10 L-12,10 L-12,-6 L-16,-6Z",fill:"#ff7a45",stroke:"#fff","stroke-width":2.5,"stroke-linejoin":"round"},houseG);
+  el("rect",{x:-4,y:0,width:8,height:10,fill:"#fff"},houseG);
+  const t=el("text",{y:28,"text-anchor":"middle","font-size":13,"font-weight":700,fill:"#2a2a22",style:"paint-order:stroke;stroke:#fffaf0;stroke-width:3.5px"},houseG);t.textContent="我家";
+  scaleNodes();
+}
+townSel.onchange=()=>{const t=TOWN_PTS.find(p=>p[0]===townSel.value);
+  if(!t){setHome(null);return}
+  setHome({lat:t[1],lng:t[2],town:t[0],exact:false});
+  document.getElementById("homeNote").textContent=`已用${t[0]}中心點估算。到地圖上點出家的位置，距離會更準。`};
+const pinBtn=document.getElementById("pin");
+pinBtn.onclick=()=>{pinMode=!pinMode;pinBtn.setAttribute("aria-pressed",pinMode);document.querySelector(".mapbox").classList.toggle("pinning",pinMode);
+  document.getElementById("homeNote").textContent=pinMode?"請在地圖上點一下家的位置（可先用左上角按鈕放大地區）。":"已取消點選。";
+  if(pinMode)document.querySelector(".mapbox").scrollIntoView({behavior:"smooth",block:"center"})};
+document.getElementById("clearHome").onclick=()=>{townSel.value="";setHome(null);document.getElementById("homeNote").textContent="已清除家的位置。"};
+addrEl.value=store.get("isle-addr")||"";
+addrEl.addEventListener("input",()=>store.set("isle-addr",addrEl.value));
+function placePin(e){
+  const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const p=pt.matrixTransform(svg.getScreenCTM().inverse());
+  const lng=p.x/KX+LNG0,lat=LAT1-p.y/KY;
+  const near=TOWN_PTS.reduce((b,t)=>{const d=Math.hypot(t[1]-lat,(t[2]-lng)*.9);return!b||d<b.d?{t,d}:b},null);
+  pinMode=false;pinBtn.setAttribute("aria-pressed",false);document.querySelector(".mapbox").classList.remove("pinning");
+  setHome({lat,lng,town:near.t[0],exact:true});
+  document.getElementById("homeNote").textContent="已標出家的位置。距離是地圖直線估算，實際通勤請按學校卡片裡的「查路線」。";
+}
+function homeSummary(){
+  if(!home)return"";
+  const list=SC.map(s=>[s,km(s)]).sort((a,b)=>a[1]-b[1]);
+  const w5=list.filter(x=>x[1]<=5).length,w10=list.filter(x=>x[1]<=10).length;
+  const hs=nearestStation(home.lat,home.lng);
+  return `<div class="homestat">家附近 5 公里內有 <b>${w5}</b> 所、10 公里內有 <b>${w10}</b> 所學校。離家最近的火車站是 <b>${hs.s.name}站</b>（約 ${fmtKm(hs.d)}）。</div>
+   <div class="eyebrow" style="margin-top:4px">離家由近到遠</div>
+   <div class="list">${list.map(([s,d])=>`<button class="row-btn" type="button" data-s="${s.name}"><span>${s.name}</span><span>${fmtKm(d)}・騎車約 ${rideMin(d)} 分</span></button>`).join("")}</div>`;
+}
+
+function render(){
+  const act=activeSchools();const filtering=state.cat||state.q;
+  SC.forEach(s=>{const n=nodes[s.name].g;n.classList.toggle("dim",filtering&&!act.has(s.name));n.classList.toggle("sel",state.school===s.name)});
+  svg.classList.toggle("has-sel",!!state.school);
+  // 把選取的學校移到最上層
+  if(state.school)schoolG.appendChild(nodes[state.school].g);
+  drawHomeLines(act);
+  renderChips();renderTable();renderPanel(act);relabel();if(typeof renderMini==="function")renderMini();
+}
+
+/* 同群連線（最小生成樹，讓同一群的學校串成一條航線） */
+function drawLinks(act){
+  linkG.innerHTML="";if(!state.cat)return;
+  const pts=SC.filter(s=>act.has(s.name));if(pts.length<2)return;
+  const col=CAT[state.cat].c;const inT=new Set([0]);
+  while(inT.size<pts.length){let best=null;
+    inT.forEach(i=>pts.forEach((p,j)=>{if(inT.has(j))return;const d=Math.hypot(p.x-pts[i].x,p.y-pts[i].y);if(!best||d<best.d)best={i,j,d}}));
+    inT.add(best.j);const a=pts[best.i],b=pts[best.j];const mx=(a.x+b.x)/2,my=(a.y+b.y)/2-best.d*.18;
+    el("path",{class:"link-line",d:`M${a.x},${a.y} Q${mx},${my} ${b.x},${b.y}`,stroke:col},linkG)}
+}
+
+/* 群別按鈕 */
+const chipsEl=document.getElementById("chips");
+CATS.forEach(c=>{c.total=ROWS.filter(r=>r.cat===c.id).reduce((a,r)=>a+r.n,0);
+  const b=document.createElement("button");b.type="button";b.className="chip";b.style.setProperty("--c",c.c);b.dataset.cat=c.id;
+  b.innerHTML=`<i></i>${c.name}<em>${c.total}</em>`;b.onclick=()=>{state.cat=state.cat===c.id?null:c.id;state.school=null;render()};chipsEl.appendChild(b)});
+function renderChips(){chipsEl.querySelectorAll(".chip").forEach(b=>b.setAttribute("aria-pressed",b.dataset.cat===state.cat))}
+
+/* 名額表 */
+function renderTable(){
+  let rows=ROWS.filter(matchRow);if(state.school)rows=rows.filter(r=>r.s===state.school);
+  if(home)rows=[...rows].sort((a,b)=>km(BYNAME[a.s])-km(BYNAME[b.s]));
+  const t=state.school?state.school:state.cat?CAT[state.cat].name:state.q?`搜尋「${state.q}」`:"全部開缺科別";
+  const sum=rows.reduce((a,r)=>a+r.n,0);
+  document.getElementById("tblTitle").textContent=`${t}｜${rows.length} 個科別、${sum} 個名額`;
+  document.getElementById("tbody").innerHTML=rows.map(r=>`<tr class="clk" data-s="${r.s}"><td><span class="gdot" style="background:${CAT[r.cat].c}"></span>${CAT[r.cat].name}</td><td>${r.d}</td><td><a class="link" href="${siteOf(r.s)}" target="_blank" rel="noopener" title="${SITES[r.s]?"前往學校官網":"搜尋學校官網"}">${r.s}</a></td><td>${BYNAME[r.s].town}</td>${home?`<td class="n">${fmtKm(km(BYNAME[r.s]))}</td>`:""}<td class="n">${r.n}</td><td>${r.note}</td></tr>`).join("")||`<tr><td colspan="7">沒有符合的科別，換個關鍵字試試。</td></tr>`;
+  document.querySelectorAll("#tbody tr.clk").forEach(tr=>tr.onclick=e=>{if(e.target.closest("a"))return;selectSchool(tr.dataset.s);document.querySelector(".mapbox").scrollIntoView({behavior:"smooth",block:"start"})});
+}
+
+/* 說明卡 */
+const panel=document.getElementById("panel");
+const gmap=n=>`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(n.replace(/^(國立|私立|市立|縣立)/,"新竹 "))}`;
+function deptRows(rows,max){return `<div class="dept">${rows.map(r=>`<span class="dot" style="background:${CAT[r.cat].c}"></span><span>${r.d}${r.note?` <small>（${r.note}）</small>`:""}<br><small>${CAT[r.cat].name}</small></span><b>${r.n} 名</b><div class="bar"><span style="width:${r.n/max*100}%;background:${CAT[r.cat].c}"></span></div>`).join("")}</div>`}
+function schoolList(list,val){return `<div class="list">${byDist(list).map(([s,v])=>`<button class="row-btn" type="button" data-s="${s}"><span>${s}</span><span>${val(v)}${home?`・${fmtKm(km(BYNAME[s]))}`:""}</span></button>`).join("")}</div>`}
+function bindList(){panel.querySelectorAll(".row-btn").forEach(b=>b.onclick=()=>selectSchool(b.dataset.s))}
+
+function renderPanel(act){
+  if(state.school){const s=BYNAME[state.school];
+    const rows=[...s.rows].sort((a,b)=>b.n-a.n);const max=Math.max(...rows.map(r=>r.n));
+    const notes=[...new Set(rows.map(r=>r.note).filter(Boolean))];
+    const typeName={國立:"國立",私立:"私立",市立:"新竹市立",縣立:"新竹縣立"}[s.type];
+    // 同科別的其他學校
+    const same=ROWS.filter(r=>r.s!==s.name&&rows.some(x=>x.d===r.d));
+    const sameMap={};same.forEach(r=>{(sameMap[r.d]=sameMap[r.d]||[]).push(r.s)});
+    panel.innerHTML=`<div class="eyebrow">${s.town}</div><h2>${s.name}</h2>
+      <div class="meta"><span class="tag">${typeName}</span>${s.pending?`<span class="tag warn">尚未確定是否開缺</span>`:`<span class="tag">${rows.length} 個科別</span><span class="tag">共 ${s.total} 名</span>`}${notes.map(n=>`<span class="tag warn">部分${n}</span>`).join("")}${s.approx?`<span class="tag warn">地圖位置待確認</span>`:""}${s.tag?`<span class="tag">${s.tag}</span>`:""}</div>
+      ${home?`<div class="dist">離家直線 <b>${fmtKm(km(s))}</b>，騎車或開車約 <b>${rideMin(km(s))}</b> 分鐘<br><small class="note">粗估值，實際時間請查路線</small></div>
+      <div class="routes"><a href="${route(s,"transit")}" target="_blank" rel="noopener">查公車／火車路線 ↗</a><a href="${route(s,"driving")}" target="_blank" rel="noopener">查開車路線 ↗</a><a href="${route(s,"bicycling")}" target="_blank" rel="noopener">查單車路線 ↗</a></div>`
+      :`<p class="note">在上方填好「我家在」，這裡就會顯示離家距離和路線。</p>`}
+      ${(()=>{const ns=nearestStation(s.lat,s.lng);return `<p class="note" style="color:var(--fg)">最近的火車站：<b>${ns.s.name}站</b>，直線約 ${fmtKm(ns.d)}${ns.d<=1.2?"，步行可到":ns.d<=3?"，可轉乘公車或騎車":"，需轉乘公車或接送"}</p>`})()}
+      ${s.pending?`<p class="note" style="color:var(--fg)">這是 116 學年新設立的學校，目前不在本次適性輔導安置的名額表中，還不確定是否會開缺。先標在地圖上，方便家長認識位置。</p>`:deptRows(rows,max)}
+      <div class="routes"><a href="${siteOf(s.name)}" target="_blank" rel="noopener">${SITES[s.name]?"前往學校官網 ↗":"搜尋學校官網 ↗"}</a><a href="${gmap(s.name)}" target="_blank" rel="noopener">在 Google 地圖看位置 ↗</a></div>
+      ${Object.keys(sameMap).length?`<div><div class="eyebrow" style="margin-bottom:4px">同科別也開在</div>${Object.entries(sameMap).map(([d,ss])=>`<p class="note"><b>${d}</b>：${ss.map(x=>`<a href="#" class="link" data-s="${x}">${BYNAME[x].short}</a>`).join("、")}</p>`).join("")}</div>`:""}
+      <button class="btn" type="button" id="back">← 回到總覽</button>`;
+    panel.querySelectorAll("a[data-s]").forEach(a=>a.onclick=e=>{e.preventDefault();selectSchool(a.dataset.s)});
+    document.getElementById("back").onclick=()=>{state.school=null;render()};
+    return}
+  if(state.cat){const c=CAT[state.cat];
+    const rows=ROWS.filter(matchRow);const per={};rows.forEach(r=>per[r.s]=(per[r.s]||0)+r.n);
+    const depts=[...new Set(rows.map(r=>r.d))];
+    panel.innerHTML=`<div class="eyebrow">群別</div><h2 style="color:${c.c}">${c.name}</h2><p class="note" style="color:var(--fg)">${c.about}</p>
+      <div class="meta">${depts.map(d=>`<span class="tag">${d}</span>`).join("")}</div>
+      <p class="note">地圖上有顏色的就是開設這一群的學校，其他學校會變灰。點學校看細節。</p>
+      ${schoolList(Object.entries(per).sort((a,b)=>b[1]-a[1]),v=>v+" 名")}`;
+    bindList();return}
+  if(state.q){const rows=ROWS.filter(matchRow);const per={};rows.forEach(r=>per[r.s]=(per[r.s]||0)+r.n);
+    panel.innerHTML=`<div class="eyebrow">搜尋結果</div><h2>「${state.q}」</h2><p class="note">${Object.keys(per).length} 所學校、${rows.length} 個科別符合。</p>${schoolList(Object.entries(per).sort((a,b)=>b[1]-a[1]),v=>v+" 名")}`;
+    bindList();return}
+  // 總覽
+  const max=Math.max(...CATS.map(c=>c.total));
+  panel.innerHTML=`<div class="eyebrow">怎麼看這座島</div><h2>點一所學校，或選一個群別</h2>
+    <p class="note" style="color:var(--fg)">每個圓圈是一所學校，中間是學校簡稱，圓圈越大代表安置名額越多，外圈顏色是各群所占比例。選群別後，沒有開這一群的學校會變灰。</p>
+    <div class="dept">${[...CATS].sort((a,b)=>b.total-a.total).map(c=>`<span class="dot" style="background:${c.c}"></span><span>${c.name}</span><b>${c.total}</b><div class="bar"><span style="width:${c.total/max*100}%;background:${c.c}"></span></div>`).join("")}</div>
+    <p class="note">標示「限男生／限女生」的科別只安置該性別學生。</p>
+    ${homeSummary()}`;
+  bindList();
+}
+
+function selectSchool(n){state.school=n;render();
+  if(isFull()){const s0=BYNAME[n],m=svg.getScreenCTM(),r=svg.getBoundingClientRect();
+    const sx=s0.x*m.a+m.e,sy=s0.y*m.d+m.f,tx=r.left+r.width/2,ty=r.top+r.height*.36;
+    setVB([vb[0]+(sx-tx)/m.a,vb[1]+(sy-ty)/m.d,vb[2]]);return}
+  const s=BYNAME[n];if(vb[2]>700&&inCity(s))setView("city")}
+function showBoat(){state.school=null;panel.innerHTML=`<div class="eyebrow">你發現了沿岸的小船</div><h2>每個孩子都有自己的航道</h2>
+  <p class="note" style="color:var(--fg)">選校時，先看孩子喜歡做什麼、擅長什麼，再看通勤距離與學校支持。名額多不代表比較適合，親自到校參觀最準。</p>
+  <button class="btn" type="button" id="back">← 回到總覽</button>`;document.getElementById("back").onclick=()=>render()}
+
+/* 搜尋 */
+let tm;document.getElementById("q").addEventListener("input",e=>{clearTimeout(tm);tm=setTimeout(()=>{state.q=e.target.value.trim();state.school=null;render()},120)});
+document.getElementById("reset").onclick=()=>{state.cat=null;state.q="";state.school=null;document.getElementById("q").value="";setView("all");render()};
+svg.addEventListener("click",e=>{if(dragGuard())return;if(pinMode){placePin(e);return}if(state.school){state.school=null;render()}});
+
+/* 統計 */
+document.getElementById("stS").textContent=SC.filter(x=>x.total>0).length;
+document.getElementById("stD").textContent=ROWS.length;
+document.getElementById("stQ").textContent=ROWS.reduce((a,r)=>a+r.n,0);
+home=store.get("isle-home");if(home&&home.town)townSel.value=home.town;
+drawHome();scaleNodes();render();
+setTimeout(()=>{const h=document.getElementById("hint");h.style.opacity=0;setTimeout(()=>h.hidden=true,700)},7000);
+</script>
+</body>
+</html>
