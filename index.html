@@ -3,20 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#101c22">
-<meta name="description" content="115學年新竹區適性安置地圖：查看各校位置、開缺科別與名額，並比較離家與火車站的距離。">
-<title>115學年新竹區適性安置地圖</title>
+<meta name="theme-color" content="#e9f5fa">
+<meta name="description" content="115學年新竹區適性安置高級中等學校地圖：查看各校位置、開缺科別與名額，並比較離家與火車站的距離。">
+<title>115學年新竹區適性安置高級中等學校地圖</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;500;700&display=swap">
 <style>
 /* Layout: 島嶼地圖為主舞台（左），學校／群別說明卡在右；手機上下堆疊，最下方是可篩選的完整名額表 */
 :root{
-  /* 深色版面：所有觀看者都使用這一組，不隨系統切換 */
-  --bg:#101c22; --surface:#1a2b33; --fg:#f3f8f9; --muted:#bccbd0; --line:#2f4651;
-  --accent:#7fdce6; --accent-soft:#21434c; --chip:#22363f; --warm:#ffb07c;
+  /* 明亮版面：所有觀看者都使用這一組，不隨系統切換 */
+  --bg:#e9f5fa; --surface:#ffffff; --fg:#12303a; --muted:#3f5f6a; --line:#c6dde5;
+  --accent:#0b7f93; --accent-soft:#d3eef4; --chip:#f1f9fc; --warm:#e8743b;
+  /* 地圖上的浮動按鈕 */
+  --ctl:rgba(255,255,255,.96); --ctl-fg:#12303a; --ctl-hover:#e3f3f8; --on:#0b7f93; --on-fg:#ffffff;
+  --shadow:0 10px 28px rgba(18,70,90,.14); --shadow-sm:0 3px 10px rgba(18,70,90,.18);
   --f-display:"Huninn","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
   --f-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
-  color-scheme:dark;
+  color-scheme:light;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -43,7 +46,7 @@ h1 small{display:block;font-family:var(--f-body);font-size:.85rem;color:var(--mu
 .btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}
 .btn:focus-visible,.chip:focus-visible,.row-btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{font:inherit;font-family:var(--f-display);font-size:.9rem;display:inline-flex;align-items:center;gap:6px;border:2px solid transparent;background:color-mix(in srgb,var(--c) 26%,var(--surface));color:var(--fg);border-radius:999px;padding:5px 12px 5px 8px;cursor:pointer}
+.chip{font:inherit;font-family:var(--f-display);font-size:.9rem;display:inline-flex;align-items:center;gap:6px;border:2px solid transparent;background:color-mix(in srgb,var(--c) 16%,var(--surface));color:var(--fg);border-radius:999px;padding:5px 12px 5px 8px;cursor:pointer}
 .chip i{width:12px;height:12px;border-radius:50%;background:var(--c);box-shadow:0 0 0 2px rgba(255,255,255,.25)}
 .chip em{font-style:normal;color:var(--muted);font-variant-numeric:tabular-nums;font-size:.78rem}
 .chip:hover{transform:translateY(-1px)}
@@ -53,37 +56,37 @@ h1 small{display:block;font-family:var(--f-body);font-size:.85rem;color:var(--mu
 .chip[aria-pressed="true"] i{background:#fff}
 .stage{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:18px;align-items:start}
 @media (max-width:900px){.stage{grid-template-columns:minmax(0,1fr)}}
-.mapbox{position:relative;border-radius:28px;overflow:hidden;background:#7fc4d6;box-shadow:0 10px 30px rgba(0,0,0,.4);border:4px solid var(--surface)}
-.mapbox svg{display:block;width:100%;height:auto;touch-action:pan-x pan-y}
+.mapbox{position:relative;border-radius:28px;overflow:hidden;background:#7fc4d6;box-shadow:var(--shadow);border:4px solid var(--surface)}
+#map{display:block;width:100%;height:auto;touch-action:pan-x pan-y}
 /* 全螢幕地圖：地圖單獨佔滿整個畫面 */
 .mapbox.full{position:fixed;inset:0;z-index:60;border-radius:0;border:0;box-shadow:none;background:#5fb0c9}
-.mapbox.full svg{width:100%;height:100%;touch-action:none}
+.mapbox.full #map{width:100%;height:100%;touch-action:none}
 .mapbox.full .maptools{top:calc(12px + env(safe-area-inset-top,0px));left:calc(12px + env(safe-area-inset-left,0px))}
 .mapbox.full .sidectl{top:calc(12px + env(safe-area-inset-top,0px));right:calc(12px + env(safe-area-inset-right,0px))}
 .mapbox.full .phase{bottom:calc(12px + env(safe-area-inset-bottom,0px));right:calc(12px + env(safe-area-inset-right,0px))}
 .mapbox.full.has-mini .phase{display:none}
-.fullcat{display:none;position:absolute;left:calc(12px + env(safe-area-inset-left,0px));top:calc(64px + env(safe-area-inset-top,0px));align-items:center;gap:8px;background:rgba(20,36,43,.92);color:#e6f0f2;border-radius:999px;padding:4px 6px 4px 14px;box-shadow:0 4px 14px rgba(0,0,0,.35);font-family:var(--f-display);font-size:.9rem}
-.fullcat select{font:inherit;font-size:.95rem;color:#10232a;background:#7fdce6;border:0;border-radius:999px;padding:6px 10px}
+.fullcat{display:none;position:absolute;left:calc(12px + env(safe-area-inset-left,0px));top:calc(64px + env(safe-area-inset-top,0px));align-items:center;gap:8px;background:var(--ctl);color:var(--ctl-fg);border-radius:999px;padding:4px 6px 4px 14px;box-shadow:var(--shadow-sm);font-family:var(--f-display);font-size:.9rem}
+.fullcat select{font:inherit;font-size:.95rem;color:var(--on-fg);background:var(--on);border:0;border-radius:999px;padding:6px 10px}
 .mapbox.full .fullcat{display:inline-flex}
 body.lock{overflow:hidden}
-.fullpill{position:absolute;left:12px;bottom:12px;display:none;align-items:center;gap:6px;font:inherit;font-family:var(--f-display);font-size:.95rem;border:0;border-radius:999px;padding:8px 14px;background:#ff9a6b;color:#1a1410;box-shadow:0 4px 14px rgba(0,0,0,.35);cursor:pointer}
+.fullpill{position:absolute;left:12px;bottom:12px;display:none;align-items:center;gap:6px;font:inherit;font-family:var(--f-display);font-size:.95rem;border:0;border-radius:999px;padding:8px 14px;background:#ff8a4c;color:#ffffff;box-shadow:var(--shadow-sm);cursor:pointer}
 .mapbox.full .fullpill{display:none!important}
 .coop{position:absolute;inset:0;display:grid;place-items:center;background:rgba(8,18,22,.5);color:#fff;font-family:var(--f-display);font-size:1.05rem;text-align:center;padding:24px;pointer-events:none;opacity:0;transition:opacity .25s}
 .coop.show{opacity:1}
-.mini{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom,0px));width:min(440px,calc(100% - 24px));background:rgba(20,36,43,.95);color:#f3f8f9;border-radius:20px;padding:14px 16px;box-shadow:0 8px 24px rgba(0,0,0,.45);display:flex;flex-direction:column;gap:8px}
+.mini{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom,0px));width:min(440px,calc(100% - 24px));background:var(--ctl);color:var(--fg);border-radius:20px;padding:14px 16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px}
 .mini h4{margin:0;font-family:var(--f-display);font-weight:400;font-size:1.2rem;line-height:1.3}
-.mini p{margin:0;font-size:.9rem;color:#cfdde1}
+.mini p{margin:0;font-size:.9rem;color:var(--muted)}
 .mini .acts{display:flex;flex-wrap:wrap;gap:8px}
-.mini .acts a,.mini .acts button{font:inherit;font-size:.88rem;text-decoration:none;border:1.5px solid #7fdce6;color:#7fdce6;background:transparent;border-radius:999px;padding:5px 12px;cursor:pointer}
-.mini .acts .primary{background:#7fdce6;color:#10232a;border-color:#7fdce6}
+.mini .acts a,.mini .acts button{font:inherit;font-size:.88rem;text-decoration:none;border:1.5px solid var(--accent);color:var(--accent);background:transparent;border-radius:999px;padding:5px 12px;cursor:pointer}
+.mini .acts .primary{background:var(--on);color:var(--on-fg);border-color:var(--on)}
 @media (pointer:coarse){.fullpill{display:inline-flex}}
-.maptools{position:absolute;top:12px;left:12px;display:flex;flex-wrap:wrap;gap:2px;padding:4px;border-radius:999px;background:rgba(20,36,43,.88);box-shadow:0 4px 14px rgba(0,0,0,.35);max-width:calc(100% - 80px)}
-.seg{font:inherit;font-family:var(--f-display);font-size:.9rem;border:0;background:transparent;color:#e6f0f2;border-radius:999px;padding:5px 12px;cursor:pointer}
-.seg:hover{background:rgba(255,255,255,.1)}
-.seg[aria-pressed="true"]{background:#ff9a6b;color:#1a1410;font-weight:700}
+.maptools{position:absolute;top:12px;left:12px;display:flex;flex-wrap:wrap;gap:2px;padding:4px;border-radius:999px;background:var(--ctl);box-shadow:var(--shadow-sm);max-width:calc(100% - 80px)}
+.seg{font:inherit;font-family:var(--f-display);font-size:.9rem;border:0;background:transparent;color:var(--ctl-fg);border-radius:999px;padding:5px 12px;cursor:pointer}
+.seg:hover{background:var(--ctl-hover)}
+.seg[aria-pressed="true"]{background:#ff8a4c;color:#ffffff;font-weight:700}
 .sidectl{position:absolute;top:12px;right:12px;display:flex;flex-direction:column;gap:8px;align-items:center}
-.rbtn{width:40px;height:40px;border-radius:50%;border:0;background:rgba(20,36,43,.88);color:#e6f0f2;font-size:1.15rem;line-height:1;cursor:pointer;display:grid;place-items:center;box-shadow:0 4px 14px rgba(0,0,0,.35);font-family:var(--f-display)}
-.rbtn:hover{background:#21434c;color:#7fdce6}
+.rbtn{width:40px;height:40px;border-radius:50%;border:0;background:var(--ctl);color:var(--ctl-fg);font-size:1.15rem;line-height:1;cursor:pointer;display:grid;place-items:center;box-shadow:var(--shadow-sm);font-family:var(--f-display)}
+.rbtn:hover{background:var(--ctl-hover);color:var(--accent)}
 .rbtn[aria-pressed="true"]{background:#e8554e;color:#fff}
 @media (max-width:600px){
   .maptools{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;max-width:calc(100% - 72px)}
@@ -93,18 +96,24 @@ body.lock{overflow:hidden}
   .chip{white-space:nowrap;flex:none}
   .rbtn,.compass{width:36px;height:36px}
   .hint{display:none}
+  .mapbox:not(.full) .phase{display:none}
 }
-.seg:focus-visible,.rbtn:focus-visible{outline:3px solid #7fdce6;outline-offset:2px}
-.compass{width:40px;height:40px;border-radius:50%;background:rgba(20,36,43,.88);box-shadow:0 4px 14px rgba(0,0,0,.35);color:#e6f0f2;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;line-height:1}
+.seg:focus-visible,.rbtn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.compass{width:40px;height:40px;border-radius:50%;background:var(--ctl);box-shadow:var(--shadow-sm);color:var(--ctl-fg);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;line-height:1}
 .compass span{color:#ff7a6e;font-size:.9rem}
-.phase{position:absolute;right:12px;bottom:12px;font-size:.8rem;background:rgba(20,36,43,.88);color:#e6f0f2;border-radius:999px;padding:4px 12px;border:0;box-shadow:0 4px 14px rgba(0,0,0,.35);cursor:pointer;font-family:inherit}
-.hint{position:absolute;left:12px;bottom:12px;font-size:.8rem;color:#e6f0f2;background:rgba(20,36,43,.88);border-radius:999px;padding:4px 12px;max-width:60%;transition:opacity .6s}
-.panel{background:var(--surface);border:0;box-shadow:0 10px 30px rgba(0,0,0,.3);border-radius:28px;padding:20px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.phase{position:absolute;right:12px;bottom:12px;display:flex;align-items:center;gap:2px;font-size:.82rem;background:var(--ctl);color:var(--muted);border-radius:999px;padding:4px 4px 4px 12px;box-shadow:var(--shadow-sm);font-family:var(--f-display)}
+.phase span{margin-right:6px}
+.phase button{font:inherit;border:0;background:transparent;color:var(--ctl-fg);border-radius:999px;padding:4px 10px;cursor:pointer}
+.phase button:hover{background:var(--ctl-hover)}
+.phase button[aria-pressed="true"]{background:var(--on);color:var(--on-fg);font-weight:700}
+.phase button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.hint{position:absolute;left:12px;bottom:12px;font-size:.8rem;color:var(--ctl-fg);background:var(--ctl);border-radius:999px;padding:4px 12px;max-width:60%;transition:opacity .6s}
+.panel{background:var(--surface);border:0;box-shadow:var(--shadow);border-radius:28px;padding:20px;display:flex;flex-direction:column;gap:14px;min-width:0}
 .panel h2{font-family:var(--f-display);font-weight:400;font-size:1.45rem;margin:0;line-height:1.25;text-wrap:balance}
 .eyebrow{font-size:.8rem;letter-spacing:.08em;color:var(--muted)}
 .meta{display:flex;flex-wrap:wrap;gap:6px}
 .tag{font-size:.8rem;border-radius:8px;padding:2px 9px;background:var(--accent-soft);color:var(--fg)}
-.tag.warn{background:color-mix(in srgb,#e0582c 40%,var(--surface))}
+.tag.warn{background:color-mix(in srgb,#e0582c 20%,var(--surface))}
 .dept{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 10px;align-items:center;font-size:.92rem}
 .dept .dot{width:10px;height:10px;border-radius:3px}
 .dept .bar{grid-column:2/4;height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin-bottom:6px}
@@ -117,7 +126,7 @@ body.lock{overflow:hidden}
 .row-btn span:last-child{font-variant-numeric:tabular-nums;color:var(--muted);white-space:nowrap}
 .link{color:var(--accent);font-weight:500;text-underline-offset:3px}
 .note{font-size:.9rem;color:var(--muted);margin:0}
-.tablebox{background:var(--surface);border:0;box-shadow:0 10px 30px rgba(0,0,0,.3);border-radius:28px;padding:18px 20px}
+.tablebox{background:var(--surface);border:0;box-shadow:var(--shadow);border-radius:28px;padding:18px 20px}
 .tablebox h3{font-family:var(--f-display);font-weight:400;font-size:1.2rem;margin:0 0 10px}
 .scroll{overflow-x:auto}
 table{border-collapse:collapse;width:100%;min-width:560px;font-size:.9rem}
@@ -141,9 +150,9 @@ tr.clk:hover td{background:var(--accent-soft)}
 .routes a:hover{background:var(--accent-soft)}
 .dist{font-size:.95rem}
 .dist b{font-family:var(--f-display);font-weight:400;font-size:1.5rem;color:var(--accent);font-variant-numeric:tabular-nums}
-.pinning svg{cursor:crosshair}
-.mapbox svg{cursor:grab}
-.mapbox.dragging svg{cursor:grabbing}
+.pinning #map{cursor:crosshair}
+#map{cursor:grab}
+.mapbox.dragging #map{cursor:grabbing}
 .gdot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:1px}
 /* SVG */
 .school{cursor:pointer}
@@ -181,7 +190,7 @@ tr.clk:hover td{background:var(--accent-soft)}
 <body>
 <div class="wrap">
   <header>
-    <h1>115學年新竹區適性安置地圖</h1>
+    <h1>115學年新竹區適性安置高級中等學校地圖</h1>
     <div class="stats">
       <div><b id="stS">22</b><span>所學校</span></div>
       <div><b id="stD">89</b><span>個開缺科別</span></div>
@@ -217,11 +226,11 @@ tr.clk:hover td{background:var(--accent-soft)}
     <div class="mapbox">
       <svg id="map" viewBox="0 0 1000 826" role="img" aria-label="新竹縣市高級中等學校分布地圖"></svg>
       <div class="maptools" role="group" aria-label="地圖範圍">
-        <button class="seg" data-zoom="all" aria-pressed="true" type="button">新竹</button>
-        <button class="seg" data-zoom="city" aria-pressed="false" type="button">市區</button>
-        <button class="seg" data-zoom="zhubei" aria-pressed="false" type="button">竹北湖口</button>
-        <button class="seg" data-zoom="east" aria-pressed="false" type="button">竹東關西</button>
-        <button class="seg" data-zoom="region" aria-pressed="false" type="button">桃竹苗</button>
+        <button class="seg" data-zoom="all" aria-pressed="true" type="button">大新竹</button>
+        <button class="seg" data-zoom="city" aria-pressed="false" type="button">竹市</button>
+        <button class="seg" data-zoom="county" aria-pressed="false" type="button">竹縣</button>
+        <button class="seg" data-zoom="zhubei" aria-pressed="false" type="button">竹北湖口新豐</button>
+        <button class="seg" data-zoom="east" aria-pressed="false" type="button">竹東關西新埔</button>
       </div>
       <div class="sidectl">
         <div class="compass" aria-hidden="true"><span>▲</span>N</div>
@@ -235,7 +244,7 @@ tr.clk:hover td{background:var(--accent-soft)}
       <div class="coop" id="coop" aria-hidden="true">用兩指縮放、移動地圖<br>或按「全螢幕看地圖」</div>
       <label class="fullcat" for="catSel"><span>群別</span><select id="catSel"><option value="">全部學校</option></select></label>
       <div class="mini" id="mini" hidden></div>
-      <button class="phase" id="phase" type="button" title="切換時段"></button>
+      <div class="phase" id="phase" role="group" aria-label="地圖配色"><span>地圖配色</span><button type="button" data-ph="0" aria-pressed="true">☀ 白天</button><button type="button" data-ph="1" aria-pressed="false">黃昏</button><button type="button" data-ph="2" aria-pressed="false">☾ 夜晚</button></div>
     </div>
     <aside class="panel" id="panel" aria-live="polite"></aside>
   </div>
@@ -415,12 +424,12 @@ const line=pts=>pts.map((p,i)=>(i?"L":"M")+p[0]+","+p[1]).join("");
 const svg=document.getElementById("map");
 /* 時段：依照現在時間決定海與光線 */
 const PHASES=[
- {key:"dawn",label:"清晨的群島",sea1:"#f6c9a8",sea2:"#86bfd4",tint:"rgba(255,180,140,.12)"},
  {key:"day",label:"白天的群島",sea1:"#9fd8e6",sea2:"#5fb0c9",tint:"rgba(255,255,255,0)"},
  {key:"dusk",label:"黃昏的群島",sea1:"#f4a77a",sea2:"#6a7fb0",tint:"rgba(255,120,60,.14)"},
  {key:"night",label:"夜晚的群島",sea1:"#2b3f6b",sea2:"#16223d",tint:"rgba(20,30,70,.38)"}];
 const h=new Date().getHours();
-let phaseIdx=h>=5&&h<8?0:h>=8&&h<16?1:h>=16&&h<19?2:3;
+/* 預設白天最清楚；家長選過的配色會記在這台裝置上 */
+let phaseIdx=0;try{const v=+localStorage.getItem("isle-phase");if(v>=0&&v<3)phaseIdx=v}catch(e){}
 
 const defs=el("defs",{},svg);
 const sg=el("radialGradient",{id:"sea",cx:"30%",cy:"20%",r:"90%"},defs);
@@ -547,8 +556,8 @@ svg.appendChild(stationG); // 車站放在學校上層，避免被圓圈蓋住
 const houseG=el("g",{"pointer-events":"none"},svg);
 
 function applyPhase(){const p=PHASES[phaseIdx];s1.setAttribute("stop-color",p.sea1);s2.setAttribute("stop-color",p.sea2);tintR.setAttribute("fill",p.tint);
-  document.getElementById("phase").textContent="此刻："+p.label+"　↻"}
-document.getElementById("phase").onclick=()=>{phaseIdx=(phaseIdx+1)%4;applyPhase()};
+  document.querySelectorAll("#phase [data-ph]").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.ph===phaseIdx))}
+document.querySelectorAll("#phase [data-ph]").forEach(b=>b.onclick=e=>{e.stopPropagation();phaseIdx=+b.dataset.ph;try{localStorage.setItem("isle-phase",phaseIdx)}catch(err){}applyPhase()});
 applyPhase();
 
 /* 學校標記：甜甜圈色環顯示各群名額比例，中間是總名額 */
@@ -590,7 +599,7 @@ SC.forEach(s=>{
 const VB0=[-80,-110,1160,958];
 const box=(a,b,c,d)=>{const[x1,y1]=P(a,d),[x2,y2]=P(b,c);const w=x2-x1,hh=y2-y1;const asp=826/1000;
   let W=w,H=hh;if(H/W<asp)H=W*asp;else W=H/asp;return[x1+w/2-W/2,y1+hh/2-H/2,W,H]};
-const VIEWS={all:VB0,region:box(120.70,121.32,24.50,25.07),city:box(120.905,121.02,24.765,24.825),zhubei:box(120.95,121.07,24.80,24.92),east:box(121.04,121.21,24.70,24.86)};
+const VIEWS={all:VB0,region:box(120.70,121.32,24.50,25.07),city:box(120.90,121.04,24.74,24.85),county:box(120.97,121.20,24.70,24.91),zhubei:box(120.97,121.06,24.81,24.91),east:box(121.06,121.20,24.70,24.85)};
 let vb=[...VB0],anim;svg.setAttribute("viewBox",VB0.join(" "));
 function setView(key){
   document.querySelectorAll("[data-zoom]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.zoom===key));
