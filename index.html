@@ -150,7 +150,18 @@ body.lock{overflow:hidden}
 .mini-btn{font-size:.78rem;padding:3px 10px;margin-left:4px}
 .foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;font-size:.85rem;color:var(--muted);padding:4px 6px}
 .foot b{color:var(--accent);font-variant-numeric:tabular-nums}
-.tablebox h3{font-family:var(--f-display);font-weight:400;font-size:1.2rem;margin:0 0 10px}
+.tablebox h3{font-family:var(--f-display);font-weight:400;font-size:1.2rem;margin:0}
+.tablebox summary{list-style:none;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px;cursor:pointer;border-radius:16px}
+.tablebox summary::-webkit-details-marker{display:none}
+.tablebox summary:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
+.tablebox[open] summary{margin-bottom:12px}
+.src-note{margin:-6px 6px 0}
+.tog{display:inline-flex;align-items:center;gap:6px;font-size:.9rem;color:var(--accent);border:1.5px solid var(--accent);border-radius:999px;padding:5px 12px;white-space:nowrap}
+.tog svg{transition:transform .2s}
+.tablebox[open] .tog svg{transform:rotate(180deg)}
+.tog-close,.tablebox[open] .tog-open{display:none}
+.tablebox[open] .tog-close{display:inline}
+.tablebox summary:hover .tog{background:var(--accent-soft)}
 .scroll{overflow-x:auto}
 table{border-collapse:collapse;width:100%;min-width:560px;font-size:.9rem}
 th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line)}
@@ -268,14 +279,14 @@ tr.clk:hover td{background:var(--accent-soft)}
     <aside class="panel" id="panel" aria-live="polite"></aside>
   </div>
 
-  <section class="tablebox">
-    <h3 id="tblTitle">全部開缺科別</h3>
+  <details class="tablebox" id="tbl">
+    <summary><h3 id="tblTitle">全部開缺科別</h3><span class="tog"><span class="tog-open">展開名額表</span><span class="tog-close">收合</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></summary>
     <div class="scroll"><table>
       <thead><tr><th>群別</th><th>科別</th><th>學校</th><th>地區</th><th class="n" id="thDist" hidden>離家直線</th><th class="n">名額</th><th>備註</th></tr></thead>
       <tbody id="tbody"></tbody>
     </table></div>
-    <p class="note" style="margin-top:10px">資料來源：115學年度適性輔導安置簡章「安置高級中等學校」新竹區名額表（3-28～3-29頁）。地圖上的學校位置為示意，實際校址請以各校官網或 Google 地圖為準。</p>
-  </section>
+  </details>
+  <p class="note src-note">資料來源：115學年度適性輔導安置簡章「安置高級中等學校」新竹區名額表（3-28～3-29頁）。地圖上的學校位置為示意，實際校址請以各校官網或 Google 地圖為準。</p>
 
   <section class="report" id="report" aria-labelledby="repTitle">
     <div class="rep-head">
