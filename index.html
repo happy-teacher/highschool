@@ -127,6 +127,25 @@ body.lock{overflow:hidden}
 .link{color:var(--accent);font-weight:500;text-underline-offset:3px}
 .note{font-size:.9rem;color:var(--muted);margin:0}
 .tablebox{background:var(--surface);border:0;box-shadow:var(--shadow);border-radius:28px;padding:18px 20px}
+.report{background:var(--surface);border-radius:28px;box-shadow:var(--shadow);padding:20px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:18px 28px}
+@media (max-width:800px){.report{grid-template-columns:minmax(0,1fr)}}
+.report h3{font-family:var(--f-display);font-weight:400;font-size:1.25rem;margin:0 0 6px}
+.rep-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:520px){.rep-form{grid-template-columns:minmax(0,1fr)}}
+.rep-row{display:flex;flex-direction:column;gap:4px;min-width:0}
+.rep-wide,.rep-acts,.rep-form .note{grid-column:1/-1}
+.rep-row label{font-size:.85rem;color:var(--muted)}
+.rep-row select,.rep-row input,.rep-row textarea{font:inherit;color:var(--fg);background:var(--chip);border:1.5px solid var(--line);border-radius:12px;padding:8px 10px;width:100%}
+.rep-row textarea{resize:vertical;min-height:96px}
+.rep-row select:focus,.rep-row input:focus,.rep-row textarea:focus{outline:none;border-color:var(--accent)}
+.rep-acts{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.rep-send{display:inline-flex;align-items:center;font-family:var(--f-display);text-decoration:none;background:var(--accent);color:#fff;border-radius:999px;padding:8px 18px}
+.rep-send:hover{filter:brightness(1.08)}
+.rep-send:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.mail{user-select:all;-webkit-user-select:all;color:var(--fg)}
+.mini-btn{font-size:.78rem;padding:3px 10px;margin-left:4px}
+.foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;font-size:.85rem;color:var(--muted);padding:4px 6px}
+.foot b{color:var(--accent);font-variant-numeric:tabular-nums}
 .tablebox h3{font-family:var(--f-display);font-weight:400;font-size:1.2rem;margin:0 0 10px}
 .scroll{overflow-x:auto}
 table{border-collapse:collapse;width:100%;min-width:560px;font-size:.9rem}
@@ -159,10 +178,10 @@ tr.clk:hover td{background:var(--accent-soft)}
 .lbl-pill{pointer-events:none}
 .bob{transition:transform .2s ease}
 .school:hover .bob{transform:translateY(-5px)}
-.school{transition:opacity .25s,filter .25s}
+.school{transition:opacity .25s}
 /* 選了一所學校：它放大，其他學校變灰 */
-.has-sel .school:not(.sel){opacity:.28;filter:grayscale(1)}
-.has-sel .school:not(.sel):hover{opacity:.7;filter:none}
+.has-sel .school:not(.sel){opacity:.25}
+.has-sel .school:not(.sel):hover{opacity:.7}
 .school.sel .bob{transform:translateY(-6px) scale(1.45)}
 .has-sel .distline:not(.hot){opacity:.12!important}
 .cloud{animation:cloud 60s linear infinite alternate}
@@ -171,11 +190,16 @@ tr.clk:hover td{background:var(--accent-soft)}
 .lbl-pill .pill-t{fill:#ffffff;font-family:var(--f-body);letter-spacing:.04em}
 .school.sel .pill{fill:#ff7a45}
 .school:hover .pill{fill:#0f7c8c}
-.school.dim{opacity:.16;filter:grayscale(1)}
+.school.dim{opacity:.16}
 .glow{opacity:0;stroke:var(--lit,#ffd36b)}
 .school.lit .glow{opacity:1;animation:glow 1.6s ease-in-out infinite}
 .school.lit .bob{transform:scale(1.3)}
 .school.lit.sel .bob{transform:translateY(-6px) scale(1.5)}
+@media (pointer:coarse){
+  .wave,.cloud,.link-line{animation:none!important}
+  .school.lit .glow{animation:none!important;stroke-width:9;stroke-opacity:.9}
+}
+.moving .school.lit .glow{animation:none}
 @keyframes glow{0%,100%{stroke-opacity:.95;stroke-width:7}50%{stroke-opacity:.35;stroke-width:12}}
 .school.sel .halo{opacity:1}
 .halo{opacity:0;transition:opacity .2s}
@@ -257,6 +281,47 @@ tr.clk:hover td{background:var(--accent-soft)}
     </table></div>
     <p class="note" style="margin-top:10px">資料來源：115學年度適性輔導安置簡章「安置高級中等學校」新竹區名額表（3-28～3-29頁）。地圖上的學校位置為示意，實際校址請以各校官網或 Google 地圖為準。</p>
   </section>
+
+  <section class="report" id="report" aria-labelledby="repTitle">
+    <div class="rep-head">
+      <h3 id="repTitle">發現資料有誤？告訴我們</h3>
+      <p class="note">學校位置、名額或網頁操作有問題，都歡迎回報。按下「用 Email 寄出」會開啟您手機或電腦的郵件程式，內容已經幫您填好。</p>
+    </div>
+    <form class="rep-form" id="repForm" novalidate>
+      <div class="rep-row">
+        <label for="repType">問題類型</label>
+        <select id="repType">
+          <option>學校位置不正確</option>
+          <option>科別或名額資料有誤</option>
+          <option>學校官網連結失效</option>
+          <option>地圖或網頁操作問題</option>
+          <option>其他建議</option>
+        </select>
+      </div>
+      <div class="rep-row">
+        <label for="repSchool">相關學校（選填）</label>
+        <select id="repSchool"><option value="">不指定</option></select>
+      </div>
+      <div class="rep-row rep-wide">
+        <label for="repMsg">說明</label>
+        <textarea id="repMsg" rows="4" placeholder="例如：○○高中的校門其實在火車站另一側；或使用的手機型號與遇到的狀況"></textarea>
+      </div>
+      <div class="rep-row rep-wide">
+        <label for="repFrom">您的稱呼或聯絡方式（選填）</label>
+        <input id="repFrom" type="text" placeholder="方便我們回覆您，可不填" autocomplete="off">
+      </div>
+      <div class="rep-acts">
+        <a class="rep-send" id="repSend" href="#">用 Email 寄出</a>
+        <button class="btn" type="button" id="repCopy">複製回報內容</button>
+      </div>
+      <p class="note" id="repNote">如果郵件程式沒有開啟，請按「複製回報內容」，再寄到 <b class="mail" id="repMail">huangyuwen0604@gmail.com</b> <button class="btn mini-btn" type="button" id="mailCopy">複製信箱</button></p>
+    </form>
+  </section>
+
+  <footer class="foot">
+    <span id="visits" hidden>瀏覽人次 <b id="visitN">—</b></span>
+    <span>115學年新竹區適性安置高級中等學校地圖</span>
+  </footer>
 </div>
 
 <script>
@@ -450,7 +515,8 @@ const waves=el("g",{class:"wave",opacity:.5},world);
 const LAND=[[121.55,25.20],[121.22,25.14],[121.14,25.10],[121.08,25.055],[121.04,25.01],[121.02,24.975],
  [120.995,24.93],[120.978,24.90],[120.968,24.868],[120.95,24.852],[120.928,24.848],[120.915,24.825],[120.905,24.795],[120.898,24.765],[120.885,24.735],[120.872,24.705],
  [120.85,24.675],[120.815,24.64],[120.78,24.605],[120.745,24.565],[120.71,24.515],[120.675,24.46],[120.64,24.40],[120.62,24.30],[121.55,24.30]].map(p=>P(p[0],p[1]));
-const landG=el("g",{filter:"url(#sh)"},world);
+el("path",{d:smooth(LAND),fill:"#20424d",opacity:.22,transform:"translate(0,8)"},world); // 便宜的陰影
+const landG=el("g",{},world);
 el("path",{d:smooth(LAND),fill:"none",stroke:"#ffffff","stroke-width":22,opacity:.35,"stroke-linejoin":"round"},world);
 el("path",{d:smooth(LAND),fill:"none",stroke:"#ffffff","stroke-width":10,opacity:.55,"stroke-linejoin":"round"},world);
 el("path",{d:smooth(LAND),fill:"url(#landg)",stroke:"#f7e7b8","stroke-width":3},landG);
@@ -514,6 +580,7 @@ const boat=el("g",{style:"cursor:pointer"},world);
 el("path",{d:"M-14,0 L14,0 L9,8 L-9,8Z",fill:"#7a4a2a"},boat);
 el("path",{d:"M0,-20 L0,0 M0,-20 L12,-4 L0,-4Z",fill:"#fff",stroke:"#555","stroke-width":1.5},boat);
 el("animateMotion",{dur:"60s",repeatCount:"indefinite",rotate:"0"},boat).appendChild(el("mpath",{href:"#boatpath"}));
+if(matchMedia("(pointer:coarse)").matches){try{svg.pauseAnimations()}catch(e){}} // 手機上小船停泊，省電也比較順
 boat.addEventListener("click",e=>{e.stopPropagation();showBoat()});
 
 const tintR=el("rect",{x:-2000,y:-2000,width:5000,height:5000,fill:"transparent","pointer-events":"none"},world);
@@ -627,15 +694,22 @@ svg.addEventListener("wheel",e=>{e.preventDefault();const p=toSvg(e.clientX,e.cl
 document.getElementById("zin").onclick=()=>zoomAt(vb[0]+vb[2]/2,vb[1]+vb[3]/2,.6);
 document.getElementById("zout").onclick=()=>zoomAt(vb[0]+vb[2]/2,vb[1]+vb[3]/2,1/.6);
 let drag=null,guardUntil=0;const dragGuard=()=>Date.now()<guardUntil;
+/* 每個畫面最多更新一次 viewBox；手勢進行中不重算圖示大小，結束後才重算 */
+let vbRaf=0,settleTimer=0;
+function paintVB(v){vb=clampVB(v);if(vbRaf)return;
+  vbRaf=requestAnimationFrame(()=>{vbRaf=0;svg.setAttribute("viewBox",vb.join(" "))})}
+function settle(){clearTimeout(settleTimer);settleTimer=setTimeout(()=>{
+  if(vbRaf){cancelAnimationFrame(vbRaf);vbRaf=0}svg.setAttribute("viewBox",vb.join(" "));
+  scaleNodes();document.querySelector(".mapbox").classList.remove("moving")},60)}
+function markMoving(){document.querySelector(".mapbox").classList.add("moving");
+  document.querySelectorAll("[data-zoom]").forEach(b=>b.setAttribute("aria-pressed",false))}
 const pxPerUnit=()=>svg.getScreenCTM().a;
 svg.addEventListener("pointerdown",e=>{if(e.pointerType!=="mouse"||e.button!==0)return;drag={x:e.clientX,y:e.clientY,vb:[...vb],moved:false,ppu:pxPerUnit()}});
 window.addEventListener("pointermove",e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;
   if(!drag.moved&&Math.hypot(dx,dy)<5)return;
   if(!drag.moved){drag.moved=true;cancelAnimationFrame(anim);document.querySelector(".mapbox").classList.add("dragging")}
-  const k=1/drag.ppu;vb=clampVB([drag.vb[0]-dx*k,drag.vb[1]-dy*k,drag.vb[2]]);
-  svg.setAttribute("viewBox",vb.join(" "));scaleNodes();
-  document.querySelectorAll("[data-zoom]").forEach(b=>b.setAttribute("aria-pressed",false))});
-window.addEventListener("pointerup",()=>{if(!drag)return;if(drag.moved)guardUntil=Date.now()+60;
+  const k=1/drag.ppu;markMoving();paintVB([drag.vb[0]-dx*k,drag.vb[1]-dy*k,drag.vb[2]])});
+window.addEventListener("pointerup",()=>{if(!drag)return;if(drag.moved){guardUntil=Date.now()+60;settle()}
   drag=null;document.querySelector(".mapbox").classList.remove("dragging")});
 document.querySelectorAll("[data-zoom]").forEach(b=>b.onclick=()=>setView(b.dataset.zoom));
 
@@ -648,8 +722,12 @@ const tMid=(a,b)=>({x:(a.clientX+b.clientX)/2,y:(a.clientY+b.clientY)/2});
 function setVB(v){vb=clampVB(v);svg.setAttribute("viewBox",vb.join(" "));scaleNodes();
   document.querySelectorAll("[data-zoom]").forEach(b=>b.setAttribute("aria-pressed",false))}
 function startPinch(e){const[a,b]=e.touches;const m=tMid(a,b);cancelAnimationFrame(anim);
-  tg={mode:"pinch",d0:tDist(a,b),vb0:[...vb],p0:toSvg(m.x,m.y),moved:true}}
-function startPan(t){tg={mode:"pan",x:t.clientX,y:t.clientY,vb0:[...vb],ppu:pxPerUnit(),moved:false}}
+  if(vbRaf){cancelAnimationFrame(vbRaf);vbRaf=0;svg.setAttribute("viewBox",vb.join(" "))}
+  const c=svg.getScreenCTM();
+  // 記下起始的換算關係，之後用算式推，不必每次讀畫面（舊手機會因此卡頓）
+  tg={mode:"pinch",d0:tDist(a,b),vb0:[...vb],p0:toSvg(m.x,m.y),ppu0:c.a,Ex:c.e+vb[0]*c.a,Ey:c.f+vb[1]*c.d,moved:true}}
+function startPan(t){if(vbRaf){cancelAnimationFrame(vbRaf);vbRaf=0;svg.setAttribute("viewBox",vb.join(" "))}
+  tg={mode:"pan",x:t.clientX,y:t.clientY,vb0:[...vb],ppu:pxPerUnit(),moved:false}}
 svg.addEventListener("touchstart",e=>{
   if(e.touches.length>=2){e.preventDefault();startPinch(e);coopHide()}
   else if(e.touches.length===1&&isFull())startPan(e.touches[0]);
@@ -659,19 +737,18 @@ svg.addEventListener("touchmove",e=>{
     if(!tg||tg.mode!=="pinch")startPinch(e);
     e.preventDefault();
     const[a,b]=e.touches,m=tMid(a,b),f=tg.d0/Math.max(10,tDist(a,b));
-    const w=Math.min(MAXW,Math.max(MINW,tg.vb0[2]*f)),r=w/tg.vb0[2],p=tg.p0;
-    // 先以兩指中心縮放，再把那一點移回手指中間，地圖會跟著手指走
-    vb=[p.x-(p.x-tg.vb0[0])*r,p.y-(p.y-tg.vb0[1])*r,w,w*.826];svg.setAttribute("viewBox",vb.join(" "));
-    const q=toSvg(m.x,m.y);setVB([vb[0]+(p.x-q.x),vb[1]+(p.y-q.y),w]);return}
+    const w=Math.min(MAXW,Math.max(MINW,tg.vb0[2]*f)),ppu=tg.ppu0*tg.vb0[2]/w,p=tg.p0;
+    // 讓兩指一開始按住的那一點，始終停在兩指中間：地圖跟著手指走
+    markMoving();paintVB([p.x-(m.x-tg.Ex)/ppu,p.y-(m.y-tg.Ey)/ppu,w]);return}
   if(e.touches.length===1){
     if(!isFull()){coopShow();return}
     if(!tg||tg.mode!=="pan")startPan(e.touches[0]);
     e.preventDefault();
     const t=e.touches[0],dx=t.clientX-tg.x,dy=t.clientY-tg.y;
     if(!tg.moved&&Math.hypot(dx,dy)<6)return;
-    tg.moved=true;setVB([tg.vb0[0]-dx/tg.ppu,tg.vb0[1]-dy/tg.ppu,tg.vb0[2]])}},{passive:false});
+    tg.moved=true;markMoving();paintVB([tg.vb0[0]-dx/tg.ppu,tg.vb0[1]-dy/tg.ppu,tg.vb0[2]])}},{passive:false});
 function touchEnd(e){
-  if(tg&&tg.moved)guardUntil=Date.now()+400;
+  if(tg&&tg.moved){guardUntil=Date.now()+400;settle()}
   if(e.touches.length===1&&isFull())startPan(e.touches[0]);else if(e.touches.length===0)tg=null}
 svg.addEventListener("touchend",touchEnd);svg.addEventListener("touchcancel",touchEnd);
 // 一般模式下單指滑動地圖時，提醒用兩指或全螢幕（像 Google 地圖嵌入的做法），頁面照常捲動
@@ -885,7 +962,9 @@ function renderPanel(act){
       ${s.pending?`<p class="note" style="color:var(--fg)">這是 116 學年新設立的學校，目前不在本次適性輔導安置的名額表中，還不確定是否會開缺。先標在地圖上，方便家長認識位置。</p>`:deptRows(rows,max)}
       <div class="routes"><a href="${siteOf(s.name)}" target="_blank" rel="noopener">${SITES[s.name]?"前往學校官網 ↗":"搜尋學校官網 ↗"}</a><a href="${gmap(s.name)}" target="_blank" rel="noopener">在 Google 地圖看位置 ↗</a></div>
       ${Object.keys(sameMap).length?`<div><div class="eyebrow" style="margin-bottom:4px">同科別也開在</div>${Object.entries(sameMap).map(([d,ss])=>`<p class="note"><b>${d}</b>：${ss.map(x=>`<a href="#" class="link" data-s="${x}">${BYNAME[x].short}</a>`).join("、")}</p>`).join("")}</div>`:""}
-      <button class="btn" type="button" id="back">← 回到總覽</button>`;
+      <button class="btn" type="button" id="back">← 回到總覽</button>
+      <a href="#report" class="link" id="repThis" style="font-size:.88rem">回報這所學校的資料錯誤</a>`;
+    document.getElementById("repThis").onclick=e=>{e.preventDefault();repSchool.value=s.name;repUpdate();document.getElementById("report").scrollIntoView({behavior:"smooth",block:"start"});document.getElementById("repMsg").focus({preventScroll:true})};
     panel.querySelectorAll("a[data-s]").forEach(a=>a.onclick=e=>{e.preventDefault();selectSchool(a.dataset.s)});
     document.getElementById("back").onclick=()=>{state.school=null;render()};
     return}
@@ -923,6 +1002,34 @@ function showBoat(){state.school=null;panel.innerHTML=`<div class="eyebrow">你�
 let tm;document.getElementById("q").addEventListener("input",e=>{clearTimeout(tm);tm=setTimeout(()=>{state.q=e.target.value.trim();state.school=null;render()},120)});
 document.getElementById("reset").onclick=()=>{state.cat=null;state.q="";state.school=null;document.getElementById("q").value="";setView("all");render()};
 svg.addEventListener("click",e=>{if(dragGuard())return;if(pinMode){placePin(e);return}if(state.school){state.school=null;render()}});
+
+/* ===== 錯誤回報：組成 Email，郵件程式開不了時可複製 ===== */
+const MAILTO="huangyuwen0604@gmail.com";
+const repSchool=document.getElementById("repSchool");
+SC.forEach(x=>{const o=document.createElement("option");o.value=x.name;o.textContent=x.name;repSchool.appendChild(o)});
+function repText(){
+  const t=document.getElementById("repType").value,sc=repSchool.value,msg=document.getElementById("repMsg").value.trim(),fr=document.getElementById("repFrom").value.trim();
+  return {subject:`【安置地圖回報】${t}${sc?"－"+sc:""}`,
+    body:`問題類型：${t}\n相關學校：${sc||"不指定"}\n\n說明：\n${msg||"（未填寫）"}\n\n回報者：${fr||"（未填寫）"}\n裝置：${navigator.userAgent}\n頁面：${location.href.split("#")[0]}`}}
+function repUpdate(){const r=repText();document.getElementById("repSend").href=`mailto:${MAILTO}?subject=${encodeURIComponent(r.subject)}&body=${encodeURIComponent(r.body)}`}
+["repType","repSchool","repMsg","repFrom"].forEach(id=>document.getElementById(id).addEventListener("input",repUpdate));
+async function copyText(txt,btn,done){
+  try{await navigator.clipboard.writeText(txt);const o=btn.textContent;btn.textContent=done;setTimeout(()=>btn.textContent=o,1600)}
+  catch(e){document.getElementById("repNote").scrollIntoView({block:"center"});const r=document.createRange();r.selectNodeContents(document.getElementById("repMail"));const sel=getSelection();sel.removeAllRanges();sel.addRange(r)}}
+document.getElementById("repCopy").onclick=e=>{const r=repText();copyText(`收件人：${MAILTO}\n主旨：${r.subject}\n\n${r.body}`,e.currentTarget,"已複製")};
+document.getElementById("mailCopy").onclick=e=>copyText(MAILTO,e.currentTarget,"已複製");
+document.getElementById("repForm").addEventListener("submit",e=>e.preventDefault());
+repUpdate();
+
+/* ===== 瀏覽人次（GoatCounter）：在下面填入代碼才會啟用 ===== */
+const GOATCOUNTER_CODE=""; // 例如 "hc-placement"，代表 https://hc-placement.goatcounter.com
+if(GOATCOUNTER_CODE&&/^https?:$/.test(location.protocol)){
+  const base=`https://${GOATCOUNTER_CODE}.goatcounter.com`;
+  const sc=document.createElement("script");sc.async=true;sc.src="https://gc.zgo.at/count.js";sc.dataset.goatcounter=base+"/count";
+  sc.onload=()=>setTimeout(showVisits,1500);document.head.appendChild(sc);
+  function showVisits(){fetch(`${base}/counter/${encodeURI(location.pathname)}.json`).then(r=>r.ok?r.json():null)
+    .then(d=>{if(d&&d.count){document.getElementById("visitN").textContent=d.count;document.getElementById("visits").hidden=false}}).catch(()=>{})}
+}
 
 /* 統計 */
 document.getElementById("stS").textContent=SC.filter(x=>x.total>0).length;
