@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;500;700&display=swap">
 <style>
-/* Layout: 島嶼地圖為主舞台（左），學校／群別說明卡在右；手機上下堆疊，最下方是可篩選的完整名額表 */
+/* Layout: 地圖為主舞台（左），學校／群別說明卡在右；手機上下堆疊，最下方是可篩選的完整名額表 */
 :root{
   /* 明亮版面：所有觀看者都使用這一組，不隨系統切換 */
   --bg:#e9f5fa; --surface:#ffffff; --fg:#12303a; --muted:#3f5f6a; --line:#c6dde5;
@@ -412,7 +412,7 @@ const RAW=`設計群|室內空間設計科|國立新竹高工|5|
 農業群|園藝科|國立關西高中|3|
 農業群|畜產保健科|國立關西高中|3|`;
 
-/* 島上的「群島」分類：學術群拆成普通科與綜合高中，家長比較好理解 */
+/* 地圖上的分類：學術群拆成普通科與綜合高中，家長比較好理解 */
 const CATS=[
  {id:"gen",name:"普通科",c:"#2f6fdb",about:"高中課程，以升大學為主要方向，三年都在學國英數社自。"},
  {id:"comp",name:"綜合高中",c:"#7a5ce0",about:"高一先試探，高二再選學術學程或專門學程，適合還在找方向的孩子。"},
@@ -494,9 +494,9 @@ const line=pts=>pts.map((p,i)=>(i?"L":"M")+p[0]+","+p[1]).join("");
 const svg=document.getElementById("map");
 /* 時段：依照現在時間決定海與光線 */
 const PHASES=[
- {key:"day",label:"白天的群島",sea1:"#9fd8e6",sea2:"#5fb0c9",tint:"rgba(255,255,255,0)"},
- {key:"dusk",label:"黃昏的群島",sea1:"#f4a77a",sea2:"#6a7fb0",tint:"rgba(255,120,60,.14)"},
- {key:"night",label:"夜晚的群島",sea1:"#2b3f6b",sea2:"#16223d",tint:"rgba(20,30,70,.38)"}];
+ {key:"day",label:"白天",sea1:"#9fd8e6",sea2:"#5fb0c9",tint:"rgba(255,255,255,0)"},
+ {key:"dusk",label:"黃昏",sea1:"#f4a77a",sea2:"#6a7fb0",tint:"rgba(255,120,60,.14)"},
+ {key:"night",label:"夜晚",sea1:"#2b3f6b",sea2:"#16223d",tint:"rgba(20,30,70,.38)"}];
 const h=new Date().getHours();
 /* 預設白天最清楚；家長選過的配色會記在這台裝置上 */
 let phaseIdx=0;try{const v=+localStorage.getItem("isle-phase");if(v>=0&&v<3)phaseIdx=v}catch(e){}
@@ -986,7 +986,7 @@ function renderPanel(act){
     bindList();return}
   // 總覽
   const max=Math.max(...CATS.map(c=>c.total));
-  panel.innerHTML=`<div class="eyebrow">怎麼看這座島</div><h2>點一所學校，或選一個群別</h2>
+  panel.innerHTML=`<div class="eyebrow">怎麼看這地圖</div><h2>點一所學校，或選一個群別</h2>
     <p class="note" style="color:var(--fg)">每個圓圈是一所學校，中間是學校簡稱，圓圈越大代表安置名額越多，外圈顏色是各群所占比例。選群別後，沒有開這一群的學校會變灰。</p>
     <div class="dept">${[...CATS].sort((a,b)=>b.total-a.total).map(c=>`<span class="dot" style="background:${c.c}"></span><span>${c.name}</span><b>${c.total}</b><div class="bar"><span style="width:${c.total/max*100}%;background:${c.c}"></span></div>`).join("")}</div>
     <p class="note">標示「限男生／限女生」的科別只安置該性別學生。</p>
