@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;500;700&display=swap">
 <style>
-/* Layout: 地圖為主舞台（左），學校／群別說明卡在右；手機上下堆疊，最下方是可篩選的完整名額表 */
+/* Layout: 島嶼地圖為主舞台（左），學校／群別說明卡在右；手機上下堆疊，最下方是可篩選的完整名額表 */
 :root{
   /* 明亮版面：所有觀看者都使用這一組，不隨系統切換 */
   --bg:#e9f5fa; --surface:#ffffff; --fg:#12303a; --muted:#3f5f6a; --line:#c6dde5;
@@ -177,6 +177,9 @@ tr.clk:hover td{background:var(--accent-soft)}
 .hb-row select,.hb-row input{font:inherit;font-size:.9rem;color:var(--fg);background:var(--chip);border:1.5px solid var(--line);border-radius:10px;padding:7px 10px}
 .hb-row input{flex:1 1 240px;min-width:0}
 .hb-row select:focus,.hb-row input:focus{outline:none;border-color:var(--accent)}
+.btn-main{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn-main:hover{filter:brightness(1.08);border-color:var(--accent)}
+.btn:disabled{opacity:.6;cursor:wait}
 .homestat{font-size:.88rem;color:var(--fg)}
 .homestat b{color:var(--accent)}
 .routes{display:flex;flex-wrap:wrap;gap:8px}
@@ -245,9 +248,11 @@ tr.clk:hover td{background:var(--accent-soft)}
       <button class="btn" id="clearHome" type="button" hidden>清除</button>
     </div>
     <div class="hb-row">
-      <input id="addr" type="text" placeholder="（選填）輸入住址，查各校路線時直接帶入 Google 地圖" autocomplete="street-address">
+      <input id="addr" type="text" placeholder="輸入住址，例如：竹東鎮北興路三段100巷" autocomplete="street-address" enterkeyhint="search">
+      <button class="btn btn-main" id="geoAddr" type="button">用地址定位</button>
+      <button class="btn" id="geoMe" type="button">📍 用我現在的位置</button>
     </div>
-    <p class="note" id="homeNote">先選鄉鎮，再到地圖上點出家的位置會更準。住址只存在這台裝置的瀏覽器裡，按「查路線」時才會送到 Google 地圖。</p>
+    <p class="note" id="homeNote">輸入住址後按「用地址定位」最準；也可以只選鄉鎮，或在地圖上點出家的位置。住址只存在這台裝置的瀏覽器裡。</p>
   </section>
 
   <div class="chips" id="chips" role="group" aria-label="依群別篩選"></div>
@@ -412,7 +417,7 @@ const RAW=`設計群|室內空間設計科|國立新竹高工|5|
 農業群|園藝科|國立關西高中|3|
 農業群|畜產保健科|國立關西高中|3|`;
 
-/* 地圖上的分類：學術群拆成普通科與綜合高中，家長比較好理解 */
+/* 島上的「群島」分類：學術群拆成普通科與綜合高中，家長比較好理解 */
 const CATS=[
  {id:"gen",name:"普通科",c:"#2f6fdb",about:"高中課程，以升大學為主要方向，三年都在學國英數社自。"},
  {id:"comp",name:"綜合高中",c:"#7a5ce0",about:"高一先試探，高二再選學術學程或專門學程，適合還在找方向的孩子。"},
@@ -494,9 +499,9 @@ const line=pts=>pts.map((p,i)=>(i?"L":"M")+p[0]+","+p[1]).join("");
 const svg=document.getElementById("map");
 /* 時段：依照現在時間決定海與光線 */
 const PHASES=[
- {key:"day",label:"白天",sea1:"#9fd8e6",sea2:"#5fb0c9",tint:"rgba(255,255,255,0)"},
- {key:"dusk",label:"黃昏",sea1:"#f4a77a",sea2:"#6a7fb0",tint:"rgba(255,120,60,.14)"},
- {key:"night",label:"夜晚",sea1:"#2b3f6b",sea2:"#16223d",tint:"rgba(20,30,70,.38)"}];
+ {key:"day",label:"白天的群島",sea1:"#9fd8e6",sea2:"#5fb0c9",tint:"rgba(255,255,255,0)"},
+ {key:"dusk",label:"黃昏的群島",sea1:"#f4a77a",sea2:"#6a7fb0",tint:"rgba(255,120,60,.14)"},
+ {key:"night",label:"夜晚的群島",sea1:"#2b3f6b",sea2:"#16223d",tint:"rgba(20,30,70,.38)"}];
 const h=new Date().getHours();
 /* 預設白天最清楚；家長選過的配色會記在這台裝置上 */
 let phaseIdx=0;try{const v=+localStorage.getItem("isle-phase");if(v>=0&&v<3)phaseIdx=v}catch(e){}
@@ -821,7 +826,7 @@ function drawHomeLines(act){
   SC.forEach(s=>{if(filtering&&!act.has(s.name))return;
     const line=el("line",{class:"distline",x1:hx,y1:hy,x2:s.x,y2:s.y,stroke:"#ffffff","stroke-width":1.4,"stroke-dasharray":"4 6","stroke-linecap":"round","vector-effect":"non-scaling-stroke",opacity:.55},homeLineG);
     // 把距離併進校名標籤：「光復高中｜4.3 km」
-    const g=nodes[s.name].lbl;setPill(s,(km(s)<1?"<1":km(s).toFixed(1))+" km");
+    const g=nodes[s.name].lbl;setPill(s,km(s)<1?Math.max(100,Math.round(km(s)*10)*100)+" m":km(s).toFixed(1)+" km");
     distLabels.push({s,g,line})});
 }
 
@@ -847,7 +852,8 @@ const store={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){retu
 const addrEl=document.getElementById("addr");
 const km=s=>{const R=6371,toR=Math.PI/180,dLa=(s.lat-home.lat)*toR,dLo=(s.lng-home.lng)*toR;
   const a=Math.sin(dLa/2)**2+Math.cos(home.lat*toR)*Math.cos(s.lat*toR)*Math.sin(dLo/2)**2;return 2*R*Math.asin(Math.sqrt(a))};
-const fmtKm=d=>d<1?"不到 1 公里":d.toFixed(1)+" 公里";
+const fmtKm=d=>d<1?`約 ${Math.max(100,Math.round(d*10)*100)} 公尺`:d.toFixed(1)+" 公里";
+const walkMin=d=>Math.max(3,Math.round(d*1.3/4.5*60)); // 步行：道路約直線 1.3 倍、時速約 4.5 公里
 const rideMin=d=>Math.max(5,Math.round(d*1.35/28*60/5)*5); // 道路約為直線 1.35 倍、平均時速約 28 公里
 const byDist=list=>home?[...list].sort((a,b)=>km(BYNAME[a[0]])-km(BYNAME[b[0]])):list;
 const origin=()=>addrEl.value.trim()||(home?`${home.lat.toFixed(5)},${home.lng.toFixed(5)}`:"");
@@ -880,6 +886,56 @@ pinBtn.onclick=()=>{pinMode=!pinMode;pinBtn.setAttribute("aria-pressed",pinMode)
 document.getElementById("clearHome").onclick=()=>{townSel.value="";setHome(null);document.getElementById("homeNote").textContent="已清除家的位置。"};
 addrEl.value=store.get("isle-addr")||"";
 addrEl.addEventListener("input",()=>store.set("isle-addr",addrEl.value));
+/* ===== 用地址定位（OpenStreetMap 的免費地址查詢）＆ 用目前位置 ===== */
+const noteEl=document.getElementById("homeNote");
+const inRegion=(lat,lng)=>lat>24.45&&lat<25.1&&lng>120.6&&lng<121.45;
+function townFull(t){if(!t)return"";return /^(新竹市|苗栗縣|桃園市)/.test(t)?t:"新竹縣"+t}
+function addrQueries(raw){
+  let a=raw.replace(/\s+/g,"").replace(/[臺]/g,"台").replace(/之\d+/g,"");
+  // 沒寫縣市或鄉鎮時，用上面選的鄉鎮補上
+  if(!/(縣|市)/.test(a.slice(0,3))&&townSel.value)a=(/[鄉鎮市區]/.test(a.slice(0,4))?"新竹縣":townFull(townSel.value))+a;
+  if(!/^(新竹|苗栗|桃園)/.test(a))a="新竹縣"+a;
+  const m=a.match(/^(新竹縣|新竹市|苗栗縣|桃園市)?(.+?[鄉鎮市區])?(.+?(?:大道|路|街|道))?([一二三四五六七八九十\d]+段)?(\d+巷)?(\d+弄)?(\d+號)?/);
+  const cn="零一二三四五六七八九";
+  const sec=m&&m[4]?m[4].replace(/^(\d)段$/,(_,d)=>cn[d]+"段"):"";
+  const county=(m&&m[1])||"",town=(m&&m[2])||"",road=(m&&m[3])||"";
+  const qs=[a];
+  if(road){qs.push(`${road}${sec}${m[5]||""}, ${town}, ${county}`);
+    qs.push(`${road}${sec}, ${town}, ${county}`);
+    if(sec)qs.push(`${road}, ${town}, ${county}`)}
+  return [...new Set(qs.map(q=>q.replace(/(, )+$/,"").replace(/, ,/g,",")))]}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function geocode(q){
+  const u=`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=tw&accept-language=zh-TW&q=${encodeURIComponent(q)}`;
+  const r=await fetch(u,{headers:{"Accept":"application/json"}});if(!r.ok)throw new Error("http "+r.status);
+  const d=await r.json();if(!d.length)return null;const lat=+d[0].lat,lng=+d[0].lon;return inRegion(lat,lng)?{lat,lng,name:d[0].display_name}:null}
+function flyHome(){const[x,y]=P(home.lng,home.lat);const w=150;VIEWS.home=[x-w/2,y-w*.826/2,w,w*.826];setView("home")}
+function nearTown(lat,lng){return TOWN_PTS.reduce((b,t)=>{const d=Math.hypot(t[1]-lat,(t[2]-lng)*.9);return!b||d<b.d?{t,d}:b},null).t[0]}
+const geoBtn=document.getElementById("geoAddr");
+async function locateAddr(){
+  const raw=addrEl.value.trim();if(!raw){noteEl.textContent="請先輸入住址。";addrEl.focus();return}
+  geoBtn.disabled=true;geoBtn.textContent="定位中…";noteEl.textContent="正在查詢住址位置…";
+  const qs=addrQueries(raw);let hit=null,level=0;
+  try{for(let i=0;i<qs.length;i++){if(i)await sleep(1100); // 免費服務每秒最多查一次
+      hit=await geocode(qs[i]);if(hit){level=i;break}}}
+  catch(e){noteEl.textContent="目前無法連線查詢住址（預覽頁或網路限制）。請改選鄉鎮，或在地圖上點出家的位置。";geoBtn.disabled=false;geoBtn.textContent="用地址定位";return}
+  geoBtn.disabled=false;geoBtn.textContent="用地址定位";
+  if(!hit){noteEl.textContent="找不到這個住址。請確認有寫鄉鎮與路名（例如：竹東鎮北興路三段），或改用「在地圖上點出我家」。";return}
+  setHome({lat:hit.lat,lng:hit.lng,town:nearTown(hit.lat,hit.lng),exact:true});flyHome();
+  noteEl.textContent=level===0?"已依住址定位。距離是直線估算，實際通勤請按學校卡片裡的「查路線」。"
+    :`查不到完整門牌，已定位到「${qs[level].split(",")[0]}」附近，誤差可能有數百公尺。若不準，可按「在地圖上點出我家」微調。`}
+geoBtn.onclick=locateAddr;
+addrEl.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();locateAddr()}});
+document.getElementById("geoMe").onclick=()=>{
+  if(!navigator.geolocation){noteEl.textContent="這個瀏覽器不支援定位，請改用住址或在地圖上點選。";return}
+  noteEl.textContent="正在取得目前位置，請在跳出的視窗按「允許」…";
+  navigator.geolocation.getCurrentPosition(pos=>{const{latitude:lat,longitude:lng}=pos.coords;
+      if(!inRegion(lat,lng)){noteEl.textContent="您目前的位置不在新竹附近，請改用住址或在地圖上點出家的位置。";return}
+      setHome({lat,lng,town:nearTown(lat,lng),exact:true});flyHome();
+      noteEl.textContent="已用目前位置當作家。若您現在不在家，請改用住址定位。"},
+    err=>{noteEl.textContent=err.code===1?"您沒有允許定位，請改用住址或在地圖上點出家的位置。":"無法取得目前位置，請改用住址或在地圖上點出家的位置。"},
+    {enableHighAccuracy:true,timeout:12000,maximumAge:60000})};
+
 function placePin(e){
   const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const p=pt.matrixTransform(svg.getScreenCTM().inverse());
   const lng=p.x/KX+LNG0,lat=LAT1-p.y/KY;
@@ -960,7 +1016,7 @@ function renderPanel(act){
     const sameMap={};same.forEach(r=>{(sameMap[r.d]=sameMap[r.d]||[]).push(r.s)});
     panel.innerHTML=`<div class="eyebrow">${s.town}</div><h2>${s.name}</h2>
       <div class="meta"><span class="tag">${typeName}</span>${s.pending?`<span class="tag warn">尚未確定是否開缺</span>`:`<span class="tag">${rows.length} 個科別</span><span class="tag">共 ${s.total} 名</span>`}${notes.map(n=>`<span class="tag warn">部分${n}</span>`).join("")}${s.approx?`<span class="tag warn">地圖位置待確認</span>`:""}${s.tag?`<span class="tag">${s.tag}</span>`:""}</div>
-      ${home?`<div class="dist">離家直線 <b>${fmtKm(km(s))}</b>，騎車或開車約 <b>${rideMin(km(s))}</b> 分鐘<br><small class="note">粗估值，實際時間請查路線</small></div>
+      ${home?`<div class="dist">離家直線 <b>${fmtKm(km(s))}</b>，${km(s)<=2.5?`步行約 <b>${walkMin(km(s))}</b> 分鐘`:`騎車或開車約 <b>${rideMin(km(s))}</b> 分鐘`}<br><small class="note">粗估值，實際時間請查路線</small></div>
       <div class="routes"><a href="${route(s,"transit")}" target="_blank" rel="noopener">查公車／火車路線 ↗</a><a href="${route(s,"driving")}" target="_blank" rel="noopener">查開車路線 ↗</a><a href="${route(s,"bicycling")}" target="_blank" rel="noopener">查單車路線 ↗</a></div>`
       :`<p class="note">在上方填好「我家在」，這裡就會顯示離家距離和路線。</p>`}
       ${(()=>{const ns=nearestStation(s.lat,s.lng);return `<p class="note" style="color:var(--fg)">最近的火車站：<b>${ns.s.name}站</b>，直線約 ${fmtKm(ns.d)}${ns.d<=1.2?"，步行可到":ns.d<=3?"，可轉乘公車或騎車":"，需轉乘公車或接送"}</p>`})()}
@@ -986,7 +1042,7 @@ function renderPanel(act){
     bindList();return}
   // 總覽
   const max=Math.max(...CATS.map(c=>c.total));
-  panel.innerHTML=`<div class="eyebrow">怎麼看這地圖</div><h2>點一所學校，或選一個群別</h2>
+  panel.innerHTML=`<div class="eyebrow">怎麼看這座島</div><h2>點一所學校，或選一個群別</h2>
     <p class="note" style="color:var(--fg)">每個圓圈是一所學校，中間是學校簡稱，圓圈越大代表安置名額越多，外圈顏色是各群所占比例。選群別後，沒有開這一群的學校會變灰。</p>
     <div class="dept">${[...CATS].sort((a,b)=>b.total-a.total).map(c=>`<span class="dot" style="background:${c.c}"></span><span>${c.name}</span><b>${c.total}</b><div class="bar"><span style="width:${c.total/max*100}%;background:${c.c}"></span></div>`).join("")}</div>
     <p class="note">標示「限男生／限女生」的科別只安置該性別學生。</p>
