@@ -47,6 +47,8 @@ h1 small{display:block;font-family:var(--f-body);font-size:.85rem;color:var(--mu
 .btn:focus-visible,.chip:focus-visible,.row-btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{font:inherit;font-family:var(--f-display);font-size:.9rem;display:inline-flex;align-items:center;gap:6px;border:2px solid transparent;background:color-mix(in srgb,var(--c) 16%,var(--surface));color:var(--fg);border-radius:999px;padding:5px 12px 5px 8px;cursor:pointer}
+.chip-reset{font:inherit;font-size:.88rem;border:1.5px dashed var(--line);background:var(--surface);color:var(--muted);border-radius:999px;padding:5px 12px;cursor:pointer}
+.chip-reset:hover{border-color:var(--accent);color:var(--accent)}
 .chip i{width:12px;height:12px;border-radius:50%;background:var(--c);box-shadow:0 0 0 2px rgba(255,255,255,.25)}
 .chip em{font-style:normal;color:var(--muted);font-variant-numeric:tabular-nums;font-size:.78rem}
 .chip:hover{transform:translateY(-1px)}
@@ -224,13 +226,6 @@ tr.clk:hover td{background:var(--accent-soft)}
 
   <p class="notice" role="note"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 7.5v6M12 16.8v.2"/></svg><span>此為115學年開缺學校及名額，僅供參考，詳細資訊仍依簡章公告為準。</span></p>
 
-  <div class="tools">
-    <label class="search" for="q">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
-      <input id="q" type="search" placeholder="搜尋學校、科別或地區，例如：餐飲、資訊、竹東" autocomplete="off">
-    </label>
-    <button class="btn" id="reset" type="button">全部顯示</button>
-  </div>
   <section class="homebar" id="homebar" aria-label="我家位置">
     <div class="hb-row">
       <label for="town">我家在</label>
@@ -284,7 +279,7 @@ tr.clk:hover td{background:var(--accent-soft)}
 
   <section class="report" id="report" aria-labelledby="repTitle">
     <div class="rep-head">
-      <h3 id="repTitle">發現資料有誤？告訴我</h3>
+      <h3 id="repTitle">發現資料有誤？告訴我們</h3>
       <p class="note">學校位置、名額或網頁操作有問題，都歡迎回報。按下「用 Email 寄出」會開啟您手機或電腦的郵件程式，內容已經幫您填好。</p>
     </div>
     <form class="rep-form" id="repForm" novalidate>
@@ -308,7 +303,7 @@ tr.clk:hover td{background:var(--accent-soft)}
       </div>
       <div class="rep-row rep-wide">
         <label for="repFrom">您的稱呼或聯絡方式（選填）</label>
-        <input id="repFrom" type="text" placeholder="方便我回覆您，可不填" autocomplete="off">
+        <input id="repFrom" type="text" placeholder="方便我們回覆您，可不填" autocomplete="off">
       </div>
       <div class="rep-acts">
         <a class="rep-send" id="repSend" href="#">用 Email 寄出</a>
@@ -934,7 +929,7 @@ function renderTable(){
   const t=state.school?state.school:state.cat?CAT[state.cat].name:state.q?`搜尋「${state.q}」`:"全部開缺科別";
   const sum=rows.reduce((a,r)=>a+r.n,0);
   document.getElementById("tblTitle").textContent=`${t}｜${rows.length} 個科別、${sum} 個名額`;
-  document.getElementById("tbody").innerHTML=rows.map(r=>`<tr class="clk" data-s="${r.s}"><td><span class="gdot" style="background:${CAT[r.cat].c}"></span>${CAT[r.cat].name}</td><td>${r.d}</td><td><a class="link" href="${siteOf(r.s)}" target="_blank" rel="noopener" title="${SITES[r.s]?"前往學校官網":"搜尋學校官網"}">${r.s}</a></td><td>${BYNAME[r.s].town}</td>${home?`<td class="n">${fmtKm(km(BYNAME[r.s]))}</td>`:""}<td class="n">${r.n}</td><td>${r.note}</td></tr>`).join("")||`<tr><td colspan="7">沒有符合的科別，換個關鍵字試試。</td></tr>`;
+  document.getElementById("tbody").innerHTML=rows.map(r=>`<tr class="clk" data-s="${r.s}"><td><span class="gdot" style="background:${CAT[r.cat].c}"></span>${CAT[r.cat].name}</td><td>${r.d}</td><td><a class="link" href="${siteOf(r.s)}" target="_blank" rel="noopener" title="${SITES[r.s]?"前往學校官網":"搜尋學校官網"}">${r.s}</a></td><td>${BYNAME[r.s].town}</td>${home?`<td class="n">${fmtKm(km(BYNAME[r.s]))}</td>`:""}<td class="n">${r.n}</td><td>${r.note}</td></tr>`).join("")||`<tr><td colspan="7">沒有符合的科別，換個群別試試。</td></tr>`;
   document.querySelectorAll("#tbody tr.clk").forEach(tr=>tr.onclick=e=>{if(e.target.closest("a"))return;selectSchool(tr.dataset.s);document.querySelector(".mapbox").scrollIntoView({behavior:"smooth",block:"start"})});
 }
 
@@ -999,8 +994,8 @@ function showBoat(){state.school=null;panel.innerHTML=`<div class="eyebrow">你�
   <button class="btn" type="button" id="back">← 回到總覽</button>`;document.getElementById("back").onclick=()=>render()}
 
 /* 搜尋 */
-let tm;document.getElementById("q").addEventListener("input",e=>{clearTimeout(tm);tm=setTimeout(()=>{state.q=e.target.value.trim();state.school=null;render()},120)});
-document.getElementById("reset").onclick=()=>{state.cat=null;state.q="";state.school=null;document.getElementById("q").value="";setView("all");render()};
+{const rb=document.createElement("button");rb.type="button";rb.id="reset";rb.className="chip-reset";rb.textContent="↺ 顯示全部";document.getElementById("chips").appendChild(rb)}
+document.getElementById("reset").onclick=()=>{state.cat=null;state.q="";state.school=null;setView("all");render()};
 svg.addEventListener("click",e=>{if(dragGuard())return;if(pinMode){placePin(e);return}if(state.school){state.school=null;render()}});
 
 /* ===== 錯誤回報：組成 Email，郵件程式開不了時可複製 ===== */
@@ -1022,7 +1017,7 @@ document.getElementById("repForm").addEventListener("submit",e=>e.preventDefault
 repUpdate();
 
 /* ===== 瀏覽人次（GoatCounter）：在下面填入代碼才會啟用 ===== */
-const GOATCOUNTER_CODE=""; // 例如 "hc-placement"，代表 https://hc-placement.goatcounter.com
+const GOATCOUNTER_CODE="happyteacher"; // 例如 "hc-placement"，代表 https://hc-placement.goatcounter.com
 if(GOATCOUNTER_CODE&&/^https?:$/.test(location.protocol)){
   const base=`https://${GOATCOUNTER_CODE}.goatcounter.com`;
   const sc=document.createElement("script");sc.async=true;sc.src="https://gc.zgo.at/count.js";sc.dataset.goatcounter=base+"/count";
