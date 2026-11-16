@@ -35,6 +35,8 @@ h1 small{display:block;font-family:var(--f-body);font-size:.85rem;color:var(--mu
 .notice svg{color:var(--warm);flex:none;margin-top:3px}
 .stats{display:flex;gap:18px;font-variant-numeric:tabular-nums}
 .stats div{display:flex;flex-direction:column}
+.stats .visit{padding-left:0}
+.stats .visit b{color:var(--warm)}
 .stats b{font-family:var(--f-display);font-weight:400;font-size:1.6rem;line-height:1.1;color:var(--accent)}
 .stats span{font-size:.78rem;color:var(--muted)}
 .tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
@@ -218,9 +220,7 @@ tr.clk:hover td{background:var(--accent-soft)}
   <header>
     <h1>115學年新竹區適性安置高級中等學校地圖</h1>
     <div class="stats">
-      <div><b id="stS">22</b><span>所學校</span></div>
-      <div><b id="stD">89</b><span>個開缺科別</span></div>
-      <div><b id="stQ">577</b><span>安置名額</span></div>
+      <div class="visit" id="visits" hidden><b id="visitN">…</b><span>瀏覽人次</span></div>
     </div>
   </header>
 
@@ -314,7 +314,6 @@ tr.clk:hover td{background:var(--accent-soft)}
   </section>
 
   <footer class="foot">
-    <span id="visits" hidden>瀏覽人次 <b id="visitN">—</b></span>
     <span>115學年新竹區適性安置高級中等學校地圖</span>
   </footer>
 </div>
@@ -1020,16 +1019,19 @@ repUpdate();
 const GOATCOUNTER_CODE="happyteacher"; // 例如 "hc-placement"，代表 https://hc-placement.goatcounter.com
 if(GOATCOUNTER_CODE&&/^https?:$/.test(location.protocol)){
   const base=`https://${GOATCOUNTER_CODE}.goatcounter.com`;
-  const sc=document.createElement("script");sc.async=true;sc.src="https://gc.zgo.at/count.js";sc.dataset.goatcounter=base+"/count";
-  sc.onload=()=>setTimeout(showVisits,1500);document.head.appendChild(sc);
-  function showVisits(){fetch(`${base}/counter/${encodeURI(location.pathname)}.json`).then(r=>r.ok?r.json():null)
-    .then(d=>{if(d&&d.count){document.getElementById("visitN").textContent=d.count;document.getElementById("visits").hidden=false}}).catch(()=>{})}
+  // 記錄這次瀏覽
+  const sc=document.createElement("script");sc.async=true;sc.src="https://gc.zgo.at/count.js";sc.dataset.goatcounter=base+"/count";document.head.appendChild(sc);
+  // 顯示全站總人次（GoatCounter 的數字最多約 4 小時更新一次）
+  const vEl=document.getElementById("visits"),vN=document.getElementById("visitN");vEl.hidden=false;
+  fetch(`${base}/counter/TOTAL.json`).then(r=>{
+    if(r.status===404){vN.textContent="統計中";vN.title="剛開始統計，數字約 4 小時內會出現";return null}
+    return r.ok?r.json():Promise.reject()})
+  .then(d=>{if(d&&d.count)vN.textContent=d.count})
+  .catch(()=>{vEl.hidden=true});
 }
 
 /* 統計 */
-document.getElementById("stS").textContent=SC.filter(x=>x.total>0).length;
-document.getElementById("stD").textContent=ROWS.length;
-document.getElementById("stQ").textContent=ROWS.reduce((a,r)=>a+r.n,0);
+
 home=store.get("isle-home");if(home&&home.town)townSel.value=home.town;
 drawHome();scaleNodes();render();
 setTimeout(()=>{const h=document.getElementById("hint");h.style.opacity=0;setTimeout(()=>h.hidden=true,700)},7000);
