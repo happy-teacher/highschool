@@ -250,7 +250,7 @@ tr.clk:hover td{background:var(--accent-soft)}
       <button class="btn" id="clearHome" type="button" hidden>清除</button>
     </div>
     <div class="hb-row">
-      <input id="addr" type="text" placeholder="輸入住址，例如：竹北市光明六路10號" autocomplete="street-address" enterkeyhint="search">
+      <input id="addr" type="text" placeholder="輸入住址，例如：竹東鎮北興路三段100巷" autocomplete="street-address" enterkeyhint="search">
       <button class="btn btn-main" id="geoAddr" type="button">用地址定位</button>
       <button class="btn" id="geoMe" type="button">📍 用我現在的位置</button>
     </div>
@@ -878,17 +878,17 @@ function drawHome(){
   const t=el("text",{y:28,"text-anchor":"middle","font-size":13,"font-weight":700,fill:"#2a2a22",style:"paint-order:stroke;stroke:#fffaf0;stroke-width:3.5px"},houseG);t.textContent="我家";
   scaleNodes();
 }
-townSel.onchange=()=>{const t=TOWN_PTS.find(p=>p[0]===townSel.value);
-  if(!t){setHome(null);return}
-  setHome({lat:t[1],lng:t[2],town:t[0],exact:false});
-  document.getElementById("homeNote").textContent=`已用${t[0]}中心點估算。到地圖上點出家的位置，距離會更準。`};
+// 選鄉鎮只用來補齊住址，不會放上「我家」圖標
+townSel.onchange=()=>{if(!townSel.value)return;
+  document.getElementById("homeNote").textContent=`已選${townSel.value}。請在下方輸入住址，再按「用地址定位」。`;addrEl.focus()};
 const pinBtn=document.getElementById("pin");
 pinBtn.onclick=()=>{pinMode=!pinMode;pinBtn.setAttribute("aria-pressed",pinMode);document.querySelector(".mapbox").classList.toggle("pinning",pinMode);
   document.getElementById("homeNote").textContent=pinMode?"請在地圖上點一下家的位置（可先用左上角按鈕放大地區）。":"已取消點選。";
   if(pinMode)document.querySelector(".mapbox").scrollIntoView({behavior:"smooth",block:"center"})};
-document.getElementById("clearHome").onclick=()=>{townSel.value="";setHome(null);document.getElementById("homeNote").textContent="已清除家的位置。"};
+document.getElementById("clearHome").onclick=()=>{townSel.value="";addrEl.value="";store.set("isle-addr","");setHome(null);document.getElementById("homeNote").textContent="已清除家的位置。"};
 addrEl.value=store.get("isle-addr")||"";
-addrEl.addEventListener("input",()=>store.set("isle-addr",addrEl.value));
+// 住址清空時，「我家」圖標也一起拿掉
+addrEl.addEventListener("input",()=>{store.set("isle-addr",addrEl.value);if(!addrEl.value.trim()&&home){setHome(null);document.getElementById("homeNote").textContent="已清除家的位置。輸入住址後按「用地址定位」，地圖就會標出您家。"}});
 /* ===== 用地址定位（OpenStreetMap 的免費地址查詢）＆ 用目前位置 ===== */
 const noteEl=document.getElementById("homeNote");
 const inRegion=(lat,lng)=>lat>24.45&&lat<25.1&&lng>120.6&&lng<121.45;
@@ -1103,7 +1103,8 @@ if(GOATCOUNTER_CODE&&/^https?:$/.test(location.protocol)){
 
 /* 統計 */
 
-home=store.get("isle-home");if(home&&home.town)townSel.value=home.town;
+// 只有存過住址時，才恢復上次的「我家」位置
+home=(store.get("isle-addr")||"").trim()?store.get("isle-home"):null;if(!home)store.set("isle-home",null);if(home&&home.town)townSel.value=home.town;
 drawHome();scaleNodes();render();
 setTimeout(()=>{const h=document.getElementById("hint");h.style.opacity=0;setTimeout(()=>h.hidden=true,700)},7000);
 </script>
