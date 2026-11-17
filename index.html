@@ -180,6 +180,8 @@ tr.clk:hover td{background:var(--accent-soft)}
 .btn-main{background:var(--accent);border-color:var(--accent);color:#fff}
 .btn-main:hover{filter:brightness(1.08);border-color:var(--accent)}
 .btn:disabled{opacity:.6;cursor:wait}
+.bus-note{margin:0;font-size:.9rem;color:var(--fg);background:var(--accent-soft);border-radius:12px;padding:8px 12px}
+.bus-note a{color:var(--accent);font-weight:700}
 .homestat{font-size:.88rem;color:var(--fg)}
 .homestat b{color:var(--accent)}
 .routes{display:flex;flex-wrap:wrap;gap:8px}
@@ -790,6 +792,7 @@ function renderMini(){
     miniEl.innerHTML=`<h4>${s.name}</h4>
       <p>${s.town}・${s.pending?"尚未確定是否開缺":`${s.rows.length} 個科別、共 ${s.total} 名`}</p>
       <p>${home?`離家直線 ${fmtKm(km(s))}・`:""}最近車站：${ns.s.name}站（${fmtKm(ns.d)}）</p>
+      <p>🚌 校車資訊請參考該校網站</p>
       <div class="acts"><button class="primary" type="button" id="miniMore">看科別與名額</button><a href="${siteOf(s.name)}" target="_blank" rel="noopener">學校官網 ↗</a>${home?`<a href="${route(s,"transit")}" target="_blank" rel="noopener">查路線 ↗</a>`:""}</div>`}
   else{const c=CAT[state.cat],n=new Set(ROWS.filter(matchRow).map(r=>r.s)).size;
     miniEl.innerHTML=`<h4 style="color:${c.c}">${c.name}</h4><p>${n} 所學校開設，點有顏色的學校看細節。</p>
@@ -949,7 +952,7 @@ function homeSummary(){
   const list=SC.map(s=>[s,km(s)]).sort((a,b)=>a[1]-b[1]);
   const w5=list.filter(x=>x[1]<=5).length,w10=list.filter(x=>x[1]<=10).length;
   const hs=nearestStation(home.lat,home.lng);
-  return `<div class="homestat">家附近 5 公里內有 <b>${w5}</b> 所、10 公里內有 <b>${w10}</b> 所學校。離家最近的火車站是 <b>${hs.s.name}站</b>（約 ${fmtKm(hs.d)}）。</div>
+  return `<div class="homestat">家附近 5 公里內有 <b>${w5}</b> 所、10 公里內有 <b>${w10}</b> 所學校。離家最近的火車站是 <b>${hs.s.name}站</b>（${fmtKm(hs.d)}）。</div>
    <div class="eyebrow" style="margin-top:4px">離家由近到遠</div>
    <div class="list">${list.map(([s,d])=>`<button class="row-btn" type="button" data-s="${s.name}"><span>${s.name}</span><span>${fmtKm(d)}・騎車約 ${rideMin(d)} 分</span></button>`).join("")}</div>`;
 }
@@ -1019,7 +1022,8 @@ function renderPanel(act){
       ${home?`<div class="dist">離家直線 <b>${fmtKm(km(s))}</b>，${km(s)<=2.5?`步行約 <b>${walkMin(km(s))}</b> 分鐘`:`騎車或開車約 <b>${rideMin(km(s))}</b> 分鐘`}<br><small class="note">粗估值，實際時間請查路線</small></div>
       <div class="routes"><a href="${route(s,"transit")}" target="_blank" rel="noopener">查公車／火車路線 ↗</a><a href="${route(s,"driving")}" target="_blank" rel="noopener">查開車路線 ↗</a><a href="${route(s,"bicycling")}" target="_blank" rel="noopener">查單車路線 ↗</a></div>`
       :`<p class="note">在上方填好「我家在」，這裡就會顯示離家距離和路線。</p>`}
-      ${(()=>{const ns=nearestStation(s.lat,s.lng);return `<p class="note" style="color:var(--fg)">最近的火車站：<b>${ns.s.name}站</b>，直線約 ${fmtKm(ns.d)}${ns.d<=1.2?"，步行可到":ns.d<=3?"，可轉乘公車或騎車":"，需轉乘公車或接送"}</p>`})()}
+      ${(()=>{const ns=nearestStation(s.lat,s.lng);return `<p class="note" style="color:var(--fg)">最近的火車站：<b>${ns.s.name}站</b>，直線 ${fmtKm(ns.d)}${ns.d<=1.2?"，步行可到":ns.d<=3?"，可轉乘公車或騎車":"，需轉乘公車或接送"}</p>`})()}
+      <p class="bus-note">🚌 可參考<a href="${siteOf(s.name)}" target="_blank" rel="noopener">該校網站</a>瀏覽校車相關資訊</p>
       ${s.pending?`<p class="note" style="color:var(--fg)">這是 116 學年新設立的學校，目前不在本次適性輔導安置的名額表中，還不確定是否會開缺。先標在地圖上，方便家長認識位置。</p>`:deptRows(rows,max)}
       <div class="routes"><a href="${siteOf(s.name)}" target="_blank" rel="noopener">${SITES[s.name]?"前往學校官網 ↗":"搜尋學校官網 ↗"}</a><a href="${gmap(s.name)}" target="_blank" rel="noopener">在 Google 地圖看位置 ↗</a></div>
       ${Object.keys(sameMap).length?`<div><div class="eyebrow" style="margin-bottom:4px">同科別也開在</div>${Object.entries(sameMap).map(([d,ss])=>`<p class="note"><b>${d}</b>：${ss.map(x=>`<a href="#" class="link" data-s="${x}">${BYNAME[x].short}</a>`).join("、")}</p>`).join("")}</div>`:""}
