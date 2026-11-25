@@ -245,6 +245,14 @@ a.url:hover{background:var(--tint)}
 .step .n{box-shadow:0 0 0 6px #fff}
 .lot textarea{border:none;background:var(--tint)}
 .opt{border:none;background:#fff}
+
+/* 三色卡片 */
+.tri>.card:nth-child(1){background:#ffe3ec}
+.tri>.card:nth-child(2){background:#fff3bf}
+.tri>.card:nth-child(3){background:#ece5ff}
+.tri>.card:nth-child(1) .num,.tri>.card:nth-child(1) .acc{color:#d6336c}
+.tri>.card:nth-child(2) .num,.tri>.card:nth-child(2) .acc{color:#b07800}
+.tri>.card:nth-child(3) .num,.tri>.card:nth-child(3) .acc{color:#6a4fd1}
 @media print{
   html,body{overflow:visible;background:#fff}
   #viewport{position:static;display:block}
@@ -286,7 +294,7 @@ a.url:hover{background:var(--tint)}
 <section class="slide" data-title="家長卡在哪裡">
   <div class="kicker">WHY</div>
   <h2>家長在選填時，最常卡住的三件事</h2>
-  <div class="grid3">
+  <div class="grid3 tri">
     <div class="card"><div class="num">1</div><h3 style="margin-top:14px">管道看不懂</h3><p>免試、適性輔導安置、各種期程與表件，簡章厚、名詞多，不知道孩子該走哪一條。</p><p class="small acc" style="margin-top:12px">→ 適性輔導安置說明：管道與期程</p></div>
     <div class="card"><div class="num">2</div><h3 style="margin-top:14px">學校在哪、離家多遠</h3><p>名額表只有校名，家長很難想像通勤距離，也不知道同一區有哪些選擇。</p><p class="small acc" style="margin-top:12px">→ 安置學校地圖：位置與距離</p></div>
     <div class="card"><div class="num">3</div><h3 style="margin-top:14px">群科差在哪</h3><p>「資料處理」和「商業經營」差在哪？孩子喜歡做菜就一定適合餐旅嗎？</p><p class="small acc" style="margin-top:12px">→ 群科小百科＋晤談提問</p></div>
@@ -344,7 +352,7 @@ a.url:hover{background:var(--tint)}
   <div class="kicker">路徑一・一般入學管道</div>
   <h2>什麼是「免試入學」？</h2>
   <div class="answer" style="font-size:25px">十二年國教中<b>多數學生升高中職的主要管道</b>。學校<b class="hl">不另外舉辦入學考試</b>，而是依各就學區訂的<b>比序項目</b>（在校表現＋會考等級）計算積分，再依學生填的志願<b>統一分發</b>。</div>
-  <div class="grid3" style="margin-top:6px">
+  <div class="grid3 tri" style="margin-top:6px">
     <div class="card"><div class="num" style="font-size:46px">①</div><h3 style="margin-top:8px">看就學區</h3><p>新竹縣市屬於<b>竹苗區</b>，用竹苗區的比序項目與志願表。</p></div>
     <div class="card"><div class="num" style="font-size:46px">②</div><h3 style="margin-top:8px">累積積分</h3><p>國中三年的服務、獎勵、出缺勤、日常表現，加上會考，都算進「原始積分」。</p></div>
     <div class="card"><div class="num" style="font-size:46px">③</div><h3 style="margin-top:8px">填志願分發</h3><p>和一般生用<b>同一套志願表</b>，身障生另享外加名額與第二輪比序。</p></div>
@@ -582,7 +590,7 @@ a.url:hover{background:var(--tint)}
 <section class="slide" data-title="試用心得分享">
   <div class="kicker">PART 3・心得分享</div>
   <h2>留言分享：你的試用心得</h2>
-  <div class="grid3">
+  <div class="grid3 tri">
     <div class="card" style="text-align:center"><div style="font-size:56px">🔍</div><h3>我們的孩子</h3><p>你選了哪一位？幫他列出哪 3 個候選科別？</p></div>
     <div class="card" style="text-align:center"><div style="font-size:56px">✨</div><h3>一個亮點</h3><p>哪個功能最能幫到家長？你會怎麼用在轉銜會議或親師座談？</p></div>
     <div class="card" style="text-align:center"><div style="font-size:56px">🧩</div><h3>一個卡點</h3><p>哪裡卡住、看不懂，或希望網站再加什麼？</p></div>
