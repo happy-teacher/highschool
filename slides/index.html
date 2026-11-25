@@ -8,8 +8,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#fff5f8;--surface:#fff;--fg:#2b1a22;--muted:#6b4a57;--line:#f6cbd8;
-  --accent:#d6336c;--accent-soft:#ffe3ec;--chip:#fff7fa;--warm:#c27c00;--warm-soft:#fff3bf;
+  --bg:#fff5f8;--surface:#fff;--fg:#2b1a22;--muted:#6b4a57;--line:#fadbe5;
+  --accent:#e64980;--accent-soft:#ffeef3;--chip:#fff7fa;--warm:#c27c00;--warm-soft:#fff3bf;
   --green:#2e9e4f;--purple:#7a5ce0;--pink:#d9468f;--gold:#e89a0c;
   --f-display:"Huninn","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
   --f-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
@@ -19,7 +19,7 @@ html,body{height:100%;background:#2a0f1c;overflow:hidden;font-family:var(--f-bod
 #viewport{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
 #deck{width:1280px;height:720px;position:relative;transform-origin:center center;flex:none}
 .slide{position:absolute;inset:0;background:var(--bg);padding:56px 72px 64px;display:none;flex-direction:column;overflow:hidden;border-radius:6px}
-.slide.active{display:flex;animation:in .35s ease}
+.slide.active{display:flex}
 @keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .slide::after{content:"";position:absolute;right:-120px;bottom:-140px;width:360px;height:360px;border-radius:50%;background:var(--accent-soft);opacity:.55;z-index:0}
 .slide>*{position:relative;z-index:1}
@@ -51,19 +51,19 @@ b.hl{background:linear-gradient(transparent 58%,#ffe066 58%);font-weight:700}
 .foot{position:absolute;left:72px;bottom:22px;font-size:15px;color:var(--muted);z-index:2}
 
 /* cover */
-.cover{background:linear-gradient(135deg,#f06595 0%,#d6336c 55%,#a61e4d 100%);color:#fff;justify-content:center}
-.cover::after{background:#ffffff;opacity:.07;width:620px;height:620px;right:-160px;bottom:-220px}
-.cover .kicker{color:#ffe066}
+.cover{background:linear-gradient(135deg,#fff0f6 0%,#ffdeeb 55%,#fcc2d7 100%);color:#2b1a22;justify-content:center}
+.cover::after{background:#ffe066;opacity:.35;width:620px;height:620px;right:-160px;bottom:-220px}
+.cover .kicker{color:#d6336c}
 .cover h1{font-size:68px;line-height:1.25;margin:12px 0 22px}
 .cover .sub{font-size:28px;opacity:.92}
 .cover .meta{margin-top:46px;font-size:21px;opacity:.88;line-height:1.8}
 .isle{position:absolute;right:72px;bottom:72px;display:flex;flex-wrap:wrap;width:440px;gap:10px;justify-content:flex-end}
-.isle span{font-family:var(--f-display);font-size:17px;padding:6px 14px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25)}
+.isle span{font-family:var(--f-display);font-size:17px;padding:6px 14px;border-radius:999px;background:#fff;border:1.5px solid #fcc2d7;color:#c2255c}
 
 /* section */
-.section{background:var(--accent);color:#fff;justify-content:center}
-.section::after{background:#fff;opacity:.08}
-.section .kicker{color:#ffe066;font-size:24px}
+.section{background:linear-gradient(135deg,#fff0f6,#ffdeeb);color:#2b1a22;justify-content:center}
+.section::after{background:#ffe066;opacity:.35}
+.section .kicker{color:#d6336c;font-size:24px}
 .section h2{font-size:64px}
 .section p{font-size:28px;opacity:.92}
 
@@ -203,7 +203,7 @@ a.url.big .u{font-size:22px} a.url.big{padding:10px 10px 10px 22px}
 .dq{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:10px 18px;margin-bottom:10px}
 .dqt{font-size:20px;font-weight:700;margin-bottom:6px}
 .opts{display:flex;flex-wrap:wrap;gap:8px}
-.opt{font-size:17px;padding:5px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--chip);transition:all .3s}
+.opt{font-size:17px;padding:5px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--chip)}
 .disc.show .opt.ok{background:#2e9e4f;border-color:#2e9e4f;color:#fff;font-weight:700}
 .disc.show .opt.ok::before{content:"✓ "}
 .disc.show .opt:not(.ok){opacity:.45}
@@ -214,7 +214,7 @@ button.reveal{margin-left:auto;font-family:var(--f-display);font-size:20px;paddi
 .disc.show button.reveal{background:var(--c);color:#fff}
 
 /* ===== 設計原則調整：白底內容頁、無邊條、色塊底與圓形圖示 ===== */
-:root{--bg:#ffffff;--tint:#fff1f5;--tint-w:#fff8db}
+:root{--bg:#ffffff;--tint:#fff7fa;--tint-w:#fff8db}
 .slide:not(.cover):not(.section)::after{display:none}
 .kicker{display:flex;align-items:center;gap:10px}
 .kicker::before{content:"";width:14px;height:14px;border-radius:50%;background:#f5c518;flex:none}
@@ -238,7 +238,7 @@ table.pts,table.ex{border:none;background:var(--tint)}
 table.pts td,table.ex td{border-bottom:1px solid #fff}
 table.pts td.g{background:#ffe3ec}
 a.url{border:none;background:var(--tint);box-shadow:none}
-a.url:hover{background:#ffe3ec}
+a.url:hover{background:var(--tint)}
 .thumb{border:none}
 .dtalk{border:none;background:var(--tint-w)}
 .q-big::before{border-radius:50%;background:#f5c518;color:#2b1a22}
@@ -717,7 +717,7 @@ a.url:hover{background:#ffe3ec}
 <div id="hud"><button id="prev" type="button" aria-label="上一頁">◀</button><span id="pg">1 / 1</span><button id="next" type="button" aria-label="下一頁">▶</button><button id="bn" type="button">備忘稿 N</button><button id="bo" type="button">總覽 O</button><button id="bf" type="button">全螢幕 F</button></div>
 <div id="notesbox"><h4>講者備忘稿</h4><div id="nt"></div></div>
 <div id="overview"></div>
-<div id="help">← → 或空白鍵翻頁・F 全螢幕・N 備忘稿・O 總覽</div>
+
 
 <script>
 (function(){
@@ -768,7 +768,7 @@ a.url:hover{background:#ffe3ec}
   var tx=null;
   document.addEventListener('touchstart',function(e){tx=e.touches[0].clientX;},{passive:true});
   document.addEventListener('touchend',function(e){if(tx===null)return;var dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>50)go(dx<0?1:-1);tx=null;});
-  setTimeout(function(){document.getElementById('help').style.opacity=0;},4000);
+  
 
 
   /* ===== 回饋表單網址：建立表單後，把網址貼在下面引號中 ===== */
