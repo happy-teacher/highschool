@@ -8,14 +8,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#e9f5fa;--surface:#fff;--fg:#12303a;--muted:#4a6872;--line:#c6dde5;
-  --accent:#0b7f93;--accent-soft:#d3eef4;--chip:#f1f9fc;--warm:#e8743b;--warm-soft:#fde9de;
+  --bg:#fff5f8;--surface:#fff;--fg:#2b1a22;--muted:#6b4a57;--line:#f6cbd8;
+  --accent:#d6336c;--accent-soft:#ffe3ec;--chip:#fff7fa;--warm:#c27c00;--warm-soft:#fff3bf;
   --green:#2e9e4f;--purple:#7a5ce0;--pink:#d9468f;--gold:#e89a0c;
   --f-display:"Huninn","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
   --f-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;background:#0d2a33;overflow:hidden;font-family:var(--f-body);color:var(--fg)}
+html,body{height:100%;background:#2a0f1c;overflow:hidden;font-family:var(--f-body);color:var(--fg)}
 #viewport{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
 #deck{width:1280px;height:720px;position:relative;transform-origin:center center;flex:none}
 .slide{position:absolute;inset:0;background:var(--bg);padding:56px 72px 64px;display:none;flex-direction:column;overflow:hidden;border-radius:6px}
@@ -33,7 +33,7 @@ h3{font-size:28px;margin-bottom:10px}
 p,li{font-size:24px;line-height:1.6}
 .muted{color:var(--muted)}
 .small{font-size:19px}
-b.hl{background:linear-gradient(transparent 58%,#ffd9a8 58%);font-weight:700}
+b.hl{background:linear-gradient(transparent 58%,#ffe066 58%);font-weight:700}
 .warm{color:var(--warm)}
 .acc{color:var(--accent)}
 
@@ -41,7 +41,7 @@ b.hl{background:linear-gradient(transparent 58%,#ffd9a8 58%);font-weight:700}
 .row{display:flex;gap:24px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.card{background:var(--surface);border-radius:20px;padding:24px 26px;box-shadow:0 6px 20px rgba(18,70,90,.10);border:1.5px solid var(--line)}
+.card{background:var(--surface);border-radius:20px;padding:24px 26px;box-shadow:0 6px 20px rgba(120,30,60,.10);border:1.5px solid var(--line)}
 .card h3{font-size:26px}
 .card p,.card li{font-size:20px;line-height:1.55}
 .card ul{padding-left:1.1em}
@@ -51,9 +51,9 @@ b.hl{background:linear-gradient(transparent 58%,#ffd9a8 58%);font-weight:700}
 .foot{position:absolute;left:72px;bottom:22px;font-size:15px;color:var(--muted);z-index:2}
 
 /* cover */
-.cover{background:linear-gradient(135deg,#0b7f93 0%,#0d5f73 60%,#12303a 100%);color:#fff;justify-content:center}
+.cover{background:linear-gradient(135deg,#f06595 0%,#d6336c 55%,#a61e4d 100%);color:#fff;justify-content:center}
 .cover::after{background:#ffffff;opacity:.07;width:620px;height:620px;right:-160px;bottom:-220px}
-.cover .kicker{color:#ffd9a8}
+.cover .kicker{color:#ffe066}
 .cover h1{font-size:68px;line-height:1.25;margin:12px 0 22px}
 .cover .sub{font-size:28px;opacity:.92}
 .cover .meta{margin-top:46px;font-size:21px;opacity:.88;line-height:1.8}
@@ -63,7 +63,7 @@ b.hl{background:linear-gradient(transparent 58%,#ffd9a8 58%);font-weight:700}
 /* section */
 .section{background:var(--accent);color:#fff;justify-content:center}
 .section::after{background:#fff;opacity:.08}
-.section .kicker{color:#ffd9a8;font-size:24px}
+.section .kicker{color:#ffe066;font-size:24px}
 .section h2{font-size:64px}
 .section p{font-size:28px;opacity:.92}
 
@@ -74,7 +74,7 @@ b.hl{background:linear-gradient(transparent 58%,#ffd9a8 58%);font-weight:700}
 .ag .w{font-size:23px;font-weight:700}
 .ag .w small{font-weight:400;color:var(--muted);font-size:18px;margin-left:10px}
 .ag .bar{height:12px;border-radius:6px;background:var(--accent)}
-.ag.hot{border-color:var(--warm);background:#fff8f3}
+.ag.hot{border-color:var(--warm);background:#fff8db}
 .ag.hot .t{color:var(--warm)} .ag.hot .bar{background:var(--warm)}
 
 /* qr */
@@ -125,15 +125,15 @@ b.hl{background:linear-gradient(transparent 58%,#ffd9a8 58%);font-weight:700}
 .tprog i{display:block;height:100%;width:100%;background:var(--accent);transition:width 1s linear}
 
 /* chrome */
-#bar{position:fixed;left:0;bottom:0;height:5px;background:var(--warm);transition:width .3s;z-index:20}
+#bar{position:fixed;left:0;bottom:0;height:5px;background:#f5c518;transition:width .3s;z-index:20}
 #hud{position:fixed;right:16px;bottom:14px;display:flex;gap:8px;align-items:center;z-index:20;opacity:.25;transition:opacity .2s}
 #hud:hover{opacity:1}
 #hud button{background:rgba(255,255,255,.9);border:0;border-radius:10px;padding:8px 12px;font-size:15px;cursor:pointer;font-family:var(--f-body)}
 #hud span{color:#fff;font-size:15px;min-width:64px;text-align:center}
-#notesbox{position:fixed;left:16px;right:16px;bottom:16px;max-height:34vh;overflow:auto;background:rgba(10,30,36,.94);color:#e8f6fa;border-radius:14px;padding:16px 20px;font-size:17px;line-height:1.7;z-index:30;display:none;border:1px solid #2a5866}
+#notesbox{position:fixed;left:16px;right:16px;bottom:16px;max-height:34vh;overflow:auto;background:rgba(40,12,24,.94);color:#fff0f5;border-radius:14px;padding:16px 20px;font-size:17px;line-height:1.7;z-index:30;display:none;border:1px solid #6b2a45}
 #notesbox.on{display:block}
-#notesbox h4{color:#ffd9a8;font-size:14px;letter-spacing:.1em;margin-bottom:6px}
-#help{position:fixed;top:14px;left:50%;transform:translateX(-50%);background:rgba(10,30,36,.9);color:#fff;border-radius:999px;padding:8px 18px;font-size:14px;z-index:30;transition:opacity .6s}
+#notesbox h4{color:#ffe066;font-size:14px;letter-spacing:.1em;margin-bottom:6px}
+#help{position:fixed;top:14px;left:50%;transform:translateX(-50%);background:rgba(40,12,24,.9);color:#fff;border-radius:999px;padding:8px 18px;font-size:14px;z-index:30;transition:opacity .6s}
 #overview{position:fixed;inset:0;background:rgba(8,24,30,.96);z-index:40;display:none;overflow:auto;padding:30px}
 #overview.on{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;align-content:start}
 #overview button{background:#fff;border:0;border-radius:12px;padding:14px;text-align:left;cursor:pointer;font-family:var(--f-body);font-size:15px;line-height:1.4;min-height:84px}
@@ -143,8 +143,8 @@ b.hl{background:linear-gradient(transparent 58%,#ffd9a8 58%);font-weight:700}
 /* links */
 a.qr{text-decoration:none;color:inherit;transition:transform .15s}
 a.qr:hover{transform:translateY(-3px);border-color:var(--accent)}
-.link{display:inline-flex;align-items:center;gap:8px;font-family:var(--f-display);font-size:20px;text-decoration:none;color:#fff;background:var(--accent);border-radius:999px;padding:9px 20px;box-shadow:0 4px 12px rgba(11,127,147,.25)}
-.link.w{background:var(--warm);box-shadow:0 4px 12px rgba(232,116,59,.25)}
+.link{display:inline-flex;align-items:center;gap:8px;font-family:var(--f-display);font-size:20px;text-decoration:none;color:#fff;background:var(--accent);border-radius:999px;padding:9px 20px;box-shadow:0 4px 12px rgba(214,51,108,.25)}
+.link.w{background:var(--warm);box-shadow:0 4px 12px rgba(224,168,0,.25)}
 .link:hover{filter:brightness(1.08)}
 .link small{font-family:var(--f-body);font-size:14px;opacity:.85}
 /* 免試 */
@@ -162,7 +162,7 @@ table.pts th,table.pts td{padding:7px 14px;border-bottom:1px solid var(--line);t
 table.pts th{background:var(--accent);color:#fff;font-family:var(--f-display);font-weight:400;font-size:18px}
 table.pts td.g{background:var(--accent-soft);color:var(--accent);font-weight:700;text-align:center;width:120px}
 table.pts td.c{text-align:center;font-weight:700;white-space:nowrap;width:86px}
-table.pts tr.tot td{background:#fff8f3;font-weight:700;font-size:19px;border-bottom:0}
+table.pts tr.tot td{background:#fff8db;font-weight:700;font-size:19px;border-bottom:0}
 table.ex{border-collapse:separate;border-spacing:0;background:#fff;border-radius:14px;overflow:hidden;border:1.5px solid var(--line);font-size:19px;width:100%}
 table.ex th,table.ex td{padding:9px 14px;border-bottom:1px solid var(--line);text-align:center}
 table.ex th{background:var(--accent-soft);color:var(--accent);font-weight:700}
@@ -174,14 +174,14 @@ table.ex td.hl2{color:var(--warm);font-weight:700;font-size:22px}
 
 .task li{font-size:17px;line-height:1.55}
 /* url bars */
-a.url{display:flex;align-items:center;gap:12px;background:#fff;border:2px solid var(--line);border-radius:999px;padding:8px 8px 8px 18px;text-decoration:none;color:var(--fg);box-shadow:0 4px 14px rgba(18,70,90,.10);transition:border-color .15s,transform .15s;max-width:100%}
+a.url{display:flex;align-items:center;gap:12px;background:#fff;border:2px solid var(--line);border-radius:999px;padding:8px 8px 8px 18px;text-decoration:none;color:var(--fg);box-shadow:0 4px 14px rgba(120,30,60,.10);transition:border-color .15s,transform .15s;max-width:100%}
 a.url:hover{border-color:var(--accent);transform:translateY(-2px)}
 a.url .ic{font-size:20px;flex:none}
 a.url .u{flex:1;min-width:0;font-size:19px;font-family:ui-monospace,"SFMono-Regular",Menlo,Consolas,var(--f-body);color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 a.url .go{flex:none;background:var(--accent);color:#fff;border-radius:999px;padding:7px 16px;font-family:var(--f-display);font-size:17px}
 a.url.w .go{background:var(--warm)} a.url.w .u{color:var(--warm)}
 a.url.big .u{font-size:22px} a.url.big{padding:10px 10px 10px 22px}
-.thumb{display:block;border-radius:16px;overflow:hidden;border:2px solid var(--line);box-shadow:0 8px 22px rgba(18,70,90,.16)}
+.thumb{display:block;border-radius:16px;overflow:hidden;border:2px solid var(--line);box-shadow:0 8px 22px rgba(120,30,60,.16)}
 .thumb img{display:block;width:100%}
 .thumb:hover{border-color:var(--accent)}
 /* lottery */
@@ -214,11 +214,11 @@ button.reveal{margin-left:auto;font-family:var(--f-display);font-size:20px;paddi
 .disc.show button.reveal{background:var(--c);color:#fff}
 
 /* ===== 設計原則調整：白底內容頁、無邊條、色塊底與圓形圖示 ===== */
-:root{--bg:#ffffff;--tint:#eef7f9;--tint-w:#fdf0e8}
+:root{--bg:#ffffff;--tint:#fff1f5;--tint-w:#fff8db}
 .slide:not(.cover):not(.section)::after{display:none}
 .kicker{display:flex;align-items:center;gap:10px}
-.kicker::before{content:"";width:14px;height:14px;border-radius:50%;background:var(--warm);flex:none}
-.cover .kicker::before,.section .kicker::before{background:#ffd9a8}
+.kicker::before{content:"";width:14px;height:14px;border-radius:50%;background:#f5c518;flex:none}
+.cover .kicker::before,.section .kicker::before{background:#ffe066}
 .card{border:none;background:var(--tint);box-shadow:none}
 .answer{border-left:none;background:var(--tint);border-radius:16px}
 .check li{border:none;background:var(--tint)}
@@ -236,12 +236,12 @@ button.reveal{margin-left:auto;font-family:var(--f-display);font-size:20px;paddi
 .cmp .h{background:var(--accent);color:#fff}.cmp .h.w{background:var(--warm);color:#fff}
 table.pts,table.ex{border:none;background:var(--tint)}
 table.pts td,table.ex td{border-bottom:1px solid #fff}
-table.pts td.g{background:#d3eef4}
+table.pts td.g{background:#ffe3ec}
 a.url{border:none;background:var(--tint);box-shadow:none}
-a.url:hover{background:#e0f1f5}
+a.url:hover{background:#ffe3ec}
 .thumb{border:none}
 .dtalk{border:none;background:var(--tint-w)}
-.q-big::before{border-radius:50%}
+.q-big::before{border-radius:50%;background:#f5c518;color:#2b1a22}
 .step .n{box-shadow:0 0 0 6px #fff}
 .lot textarea{border:none;background:var(--tint)}
 .opt{border:none;background:#fff}
@@ -316,22 +316,22 @@ a.url:hover{background:#e0f1f5}
   <div class="kicker">適性輔導安置說明・重要期程及管道說明</div>
   <h2>升學的兩條路徑：概覽與核心選擇</h2>
   <div class="grid2" style="gap:30px">
-    <div style="background:#bfe9f1;border:4px solid #0b7f93;border-radius:22px;padding:22px 22px 24px;text-align:center;color:#111">
-      <h3 style="font-size:30px;margin:0;color:#111"><span style="background:#0b7f93;color:#fff;border-radius:10px;padding:2px 12px;margin-right:8px;font-size:24px">路徑一</span>一般入學管道</h3>
+    <div style="background:#ffe3ec;border:4px solid #d6336c;border-radius:22px;padding:22px 22px 24px;text-align:center;color:#111">
+      <h3 style="font-size:30px;margin:0;color:#111"><span style="background:#d6336c;color:#fff;border-radius:10px;padding:2px 12px;margin-right:8px;font-size:24px">路徑一</span>一般入學管道</h3>
       <p style="font-size:20px;margin-top:10px;color:#111">和一般生走同一套制度，另有身障外加名額</p>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px">
         <span style="background:#ffd23f;border:3px solid #111;border-radius:14px;padding:14px 6px;font-family:var(--f-display);font-size:24px;color:#111">免試入學 ★</span>
-        <span style="background:#fff;border:2px solid #0b7f93;border-radius:14px;padding:14px 6px;font-family:var(--f-display);font-size:24px;color:#111">優先免試</span>
-        <span style="background:#fff;border:2px solid #0b7f93;border-radius:14px;padding:14px 6px;font-family:var(--f-display);font-size:24px;color:#111">特色招生</span>
+        <span style="background:#fff;border:2px solid #d6336c;border-radius:14px;padding:14px 6px;font-family:var(--f-display);font-size:24px;color:#111">優先免試</span>
+        <span style="background:#fff;border:2px solid #d6336c;border-radius:14px;padding:14px 6px;font-family:var(--f-display);font-size:24px;color:#111">特色招生</span>
       </div>
     </div>
-    <div style="background:#ffdca0;border:4px solid #d98a00;border-radius:22px;padding:22px 22px 24px;text-align:center;color:#111">
-      <h3 style="font-size:30px;margin:0;color:#111"><span style="background:#d98a00;color:#fff;border-radius:10px;padding:2px 12px;margin-right:8px;font-size:24px">路徑二</span>適性輔導安置</h3>
+    <div style="background:#fff3bf;border:4px solid #e0a800;border-radius:22px;padding:22px 22px 24px;text-align:center;color:#111">
+      <h3 style="font-size:30px;margin:0;color:#111"><span style="background:#e0a800;color:#fff;border-radius:10px;padding:2px 12px;margin-right:8px;font-size:24px">路徑二</span>適性輔導安置</h3>
       <p style="font-size:20px;margin-top:10px;color:#111">依安置簡章，由鑑輔會安置</p>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px">
-        <span style="background:#fff;border:2px solid #d98a00;border-radius:14px;padding:14px 6px;font-family:var(--f-display);font-size:24px;color:#111;display:flex;align-items:center;justify-content:center">特教學校</span>
-        <span style="background:#fff;border:2px solid #d98a00;border-radius:14px;padding:8px 6px;font-family:var(--f-display);font-size:21px;line-height:1.3;color:#111">高中集中式<br>特教班</span>
-        <span style="background:#fff;border:2px solid #d98a00;border-radius:14px;padding:14px 6px;font-family:var(--f-display);font-size:24px;color:#111;display:flex;align-items:center;justify-content:center">高中</span>
+        <span style="background:#fff;border:2px solid #e0a800;border-radius:14px;padding:14px 6px;font-family:var(--f-display);font-size:24px;color:#111;display:flex;align-items:center;justify-content:center">特教學校</span>
+        <span style="background:#fff;border:2px solid #e0a800;border-radius:14px;padding:8px 6px;font-family:var(--f-display);font-size:21px;line-height:1.3;color:#111">高中集中式<br>特教班</span>
+        <span style="background:#fff;border:2px solid #e0a800;border-radius:14px;padding:14px 6px;font-family:var(--f-display);font-size:24px;color:#111;display:flex;align-items:center;justify-content:center">高中</span>
       </div>
     </div>
   </div>
