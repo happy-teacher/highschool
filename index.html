@@ -49,7 +49,61 @@ h1 small{display:block;font-family:var(--f-body);font-size:.85rem;color:var(--mu
 .btn:focus-visible,.chip:focus-visible,.row-btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{font:inherit;font-family:var(--f-display);font-size:.9rem;display:inline-flex;align-items:center;gap:6px;border:2px solid transparent;background:color-mix(in srgb,var(--c) 16%,var(--surface));color:var(--fg);border-radius:999px;padding:5px 12px 5px 8px;cursor:pointer}
-.chip-reset{font:inherit;font-size:.88rem;border:1.5px dashed var(--line);background:var(--surface);color:var(--muted);border-radius:999px;padding:5px 12px;cursor:pointer}
+.finder{display:flex;flex-direction:column;gap:10px}
+.finder-row{display:flex;flex-direction:column;gap:6px}
+.finder-lbl{font-size:.9rem;color:var(--muted)}
+.finder-lbl b{color:var(--fg);font-weight:700}
+.verbs{display:flex;flex-wrap:wrap;gap:8px}
+.verb{font:inherit;font-family:var(--f-display);font-size:1rem;border:2px solid #ff8a4c;background:var(--surface);color:#c2552a;border-radius:14px;padding:6px 16px;cursor:pointer;transition:transform .15s}
+.verb:hover{transform:translateY(-1px);background:#fff1e8}
+.verb[aria-pressed="true"]{background:#ff8a4c;color:#fff}
+.verb:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+@media (max-width:600px){.verbs{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}.verb{flex:none}}
+.g-tag{margin:0;font-size:1.02rem;line-height:1.55;color:var(--fg)}
+.g-keys{display:flex;gap:6px;flex-wrap:wrap}
+.g-keys span{font-family:var(--f-display);font-size:.88rem;padding:2px 12px;border-radius:999px;background:color-mix(in srgb,var(--c) 15%,var(--surface));color:var(--fg);border:1.5px solid color-mix(in srgb,var(--c) 45%,transparent)}
+.g-fit{font-size:.93rem;background:var(--chip);border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.g-fit b{font-size:.8rem;color:var(--muted);font-weight:500;letter-spacing:.04em}
+.g-tabs{display:flex;gap:4px;background:var(--chip);border-radius:999px;padding:4px}
+.g-tabs button{flex:1;font:inherit;font-family:var(--f-display);font-size:.92rem;border:0;background:transparent;color:var(--muted);border-radius:999px;padding:6px 8px;cursor:pointer}
+.g-tabs button[aria-selected="true"]{background:var(--accent);color:#fff}
+.g-tabs button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.g-list{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:4px;font-size:.95rem}
+.g-tip{font-size:.9rem;background:#fff6dc;color:#5a4410;border-radius:14px;padding:10px 12px;line-height:1.55}
+.g-cmp{border:1.5px dashed var(--line);border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;font-size:.9rem}
+.g-cmp > b{font-size:.8rem;color:var(--muted);font-weight:500;letter-spacing:.04em}
+.g-cmp p{margin:0;color:var(--fg)}
+.cmp-row{display:flex;flex-direction:column;gap:2px}
+.cmp-row span,.cmp-go{font-family:var(--f-display);color:var(--c);font-size:.95rem}
+.cmp-row em{font-style:normal;color:var(--fg)}
+.cmp-go{font:inherit;font-family:var(--f-display);border:0;background:none;padding:0;cursor:pointer;text-align:left;text-decoration:underline;text-underline-offset:3px}
+.cmp-ne{font-size:1.1rem;color:var(--muted);line-height:1}
+.v-cats{display:flex;flex-direction:column;gap:8px}
+.v-cat{font:inherit;text-align:left;display:flex;flex-direction:column;gap:2px;border:0;border-left:6px solid var(--c);background:color-mix(in srgb,var(--c) 10%,var(--surface));border-radius:12px;padding:10px 12px;cursor:pointer;color:var(--fg)}
+.v-cat b{font-family:var(--f-display);font-weight:400;font-size:1.08rem;color:var(--c)}
+.v-cat span{font-size:.9rem}
+.v-cat small{font-size:.8rem;color:var(--muted)}
+.v-cat:hover{background:color-mix(in srgb,var(--c) 18%,var(--surface))}
+.to-cat{font:inherit;font-size:.8rem;border:0;background:none;padding:0;color:var(--accent);cursor:pointer;text-align:left}
+.to-cat:hover{text-decoration:underline}
+.cy{display:inline-block;font-size:.72rem;font-weight:700;color:#8a4a00;background:#ffe3b8;border-radius:6px;padding:0 6px;margin-left:4px;vertical-align:1px;cursor:help}
+.talk{background:var(--surface);border-radius:28px;box-shadow:var(--shadow);padding:18px 20px}
+.talk summary{list-style:none;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px;cursor:pointer;border-radius:16px}
+.talk summary::-webkit-details-marker{display:none}
+.talk summary:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
+.talk summary h3{font-family:var(--f-display);font-weight:400;font-size:1.2rem;margin:0}
+.talk[open] .tog svg{transform:rotate(180deg)}
+.talk[open] .tog-open{display:none}
+.talk[open] .tog-close{display:inline}
+.talk summary:hover .tog{background:var(--accent-soft)}
+.talk-lead{margin:14px 0 6px}
+.talk-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 28px}
+@media (max-width:760px){.talk-grid{grid-template-columns:minmax(0,1fr)}}
+.talk h4{font-family:var(--f-display);font-weight:400;font-size:1.05rem;margin:12px 0 6px;color:var(--accent)}
+.talk ol,.talk ul{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:6px;font-size:.95rem}
+.talk-s b{display:block;font-weight:700}
+.chips{align-items:center}
+.chip-reset{flex:none;white-space:nowrap;font:inherit;font-size:.88rem;border:1.5px dashed var(--line);background:var(--surface);color:var(--muted);border-radius:999px;padding:5px 12px;cursor:pointer}
 .chip-reset:hover{border-color:var(--accent);color:var(--accent)}
 .chip i{width:12px;height:12px;border-radius:50%;background:var(--c);box-shadow:0 0 0 2px rgba(255,255,255,.25)}
 .chip em{font-style:normal;color:var(--muted);font-variant-numeric:tabular-nums;font-size:.78rem}
@@ -257,7 +311,16 @@ tr.clk:hover td{background:var(--accent-soft)}
     <p class="note" id="homeNote">輸入住址後按「用地址定位」最準；也可以只選鄉鎮，或在地圖上點出家的位置。住址只存在這台裝置的瀏覽器裡。</p>
   </section>
 
-  <div class="chips" id="chips" role="group" aria-label="依群別篩選"></div>
+  <div class="finder">
+    <div class="finder-row">
+      <span class="finder-lbl">不知道選哪一群？先選孩子<b>喜歡「做」的事</b></span>
+      <div class="verbs" id="verbs" role="group" aria-label="用喜歡做的事找群科"></div>
+    </div>
+    <div class="finder-row">
+      <span class="finder-lbl">或直接選群別</span>
+      <div class="chips" id="chips" role="group" aria-label="依群別篩選"></div>
+    </div>
+  </div>
 
   <div class="stage">
     <div class="mapbox">
@@ -293,7 +356,35 @@ tr.clk:hover td{background:var(--accent-soft)}
       <tbody id="tbody"></tbody>
     </table></div>
   </details>
-  <p class="note src-note">資料來源：115學年度適性輔導安置簡章「安置高級中等學校」新竹區名額表（3-28～3-29頁）。地圖上的學校位置為示意，實際校址請以各校官網或 Google 地圖為準。</p>
+  <p class="note src-note">群科介紹整理自「116學年度身心障礙學生適性輔導安置宣導說明會—技術型高級中等學校群科介紹」簡報（國立北斗家商，資料基準115學年度）；普通科、綜合高中為本站補充。<br>資料來源：115學年度適性輔導安置簡章「安置高級中等學校」新竹區名額表（3-28～3-29頁）。地圖上的學校位置為示意，實際校址請以各校官網或 Google 地圖為準。</p>
+
+  <details class="talk" id="talk">
+    <summary><h3>選填前，和孩子聊聊</h3><span class="tog"><span class="tog-open">展開</span><span class="tog-close">收合</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></summary>
+    <p class="note talk-lead">先認識孩子，再比較科別；先看學習活動，再談職業名稱。不要只問「你喜歡什麼」，還要追問「你願意一直練什麼」。</p>
+    <div class="talk-grid">
+      <div>
+        <h4>6 句晤談提問</h4>
+        <ol class="talk-q">
+          <li>上一次你忘記時間、願意一直做下去的事是什麼？</li>
+          <li>你想學的是設計、製作、維修、照顧、分析、銷售還是表演？</li>
+          <li>你願意花很多時間反覆練習的技能是什麼？</li>
+          <li>你喜歡面對機器、數據、動植物、顧客、作品還是戶外？</li>
+          <li>這個科別有哪三門專業課？你看過設備和學生作品嗎？</li>
+          <li>如果畢業後先就業或先升學，你想要哪一種準備？</li>
+        </ol>
+      </div>
+      <div>
+        <h4>資訊查核 3 步驟</h4>
+        <ol class="talk-s">
+          <li><b>確認分類</b>這是正規科別、實用技能學程，還是產業特殊需求類科？</li>
+          <li><b>看學校證據</b>課程計畫、校訂特色、實習設備、學生作品和畢業進路。可以從地圖上的學校卡片連到各校官網。</li>
+          <li><b>查招生規則</b>就學區名額、資格、報名方式、試探與分發時程，以簡章公告為準。</li>
+        </ol>
+        <h4>帶走三句話</h4>
+        <ul class="talk-t"><li>選群，看興趣與學習型態。</li><li>選科，看課程、實習與科別差異。</li><li>看進路，分清直接就業、繼續升學與依法取證。</li></ul>
+      </div>
+    </div>
+  </details>
 
   <section class="report" id="report" aria-labelledby="repTitle">
     <div class="rep-head">
@@ -435,6 +526,101 @@ const CATS=[
  {id:"food",name:"食品群",c:"#b49a12",about:"食品加工科，學食品製作、保存與檢驗。"},
  {id:"agri",name:"農業群",c:"#5a8f29",about:"園藝、畜產保健，學植物栽培與動物照顧。"}
 ];
+
+/* ===== 群科小百科：技術型高中各群整理自「116學年度身心障礙學生適性輔導安置宣導說明會—技術型高級中等學校群科介紹」簡報；普通科、綜合高中為本站補充 ===== */
+const GUIDE={
+ gen:{type:"普通型高中",tag:"以國英數社自打底，為升大學做準備",keys:["學科","探究","升學"],fit:"喜歡讀書、願意長時間學習學科內容；還沒確定專業方向，也能先打好基礎。",
+  learn:["國、英、數、社會、自然等共同科目","高二起的加深加廣選修","自主學習與探究實作","學習歷程檔案的累積"],
+  skills:["閱讀理解與書面表達","數理推理與解題","規劃自己的學習進度","專題探究與報告"],
+  path:["大學各學系（學測、分科測驗、申請入學等）","依興趣選擇文、理、社會、藝術等領域","畢業後再選定專業方向"],
+  tip:"普通科以學科學習為主，課業份量重。請評估孩子的學習負荷，以及需要的學習支持。",own:true},
+ comp:{type:"綜合型高中",tag:"高一先試探，高二再選學術學程或專門學程",keys:["試探","選學程","彈性"],fit:"對升學或專業還不確定，想先多方嘗試再決定方向。",
+  learn:["高一：共同科目與各種試探課程","高二起：選擇學術學程或專門學程","專門學程依各校開設內容學習專業"],
+  skills:["了解自己的興趣與能力","學術學程：打好升大學的學科基礎","專門學程：學到一項專業技能"],
+  path:["學術學程：升大學","專門學程：升四技二專，或畢業後就業"],
+  tip:"各校開設的專門學程不一樣，選填前要先查清楚該校有哪些學程。",own:true},
+ des:{type:"藝術與設計類",tag:"以視覺、空間、產品與工藝，把創意化成可交付的作品",keys:["需求","創意","交付"],fit:"有美感，也願意研究使用者、反覆修改並準時交付。",
+  learn:["設計基礎、素描與色彩","視覺傳達、圖文與多媒體","室內空間、家具與3D","金工、陶瓷、竹木等工藝"],
+  skills:["把需求轉成設計提案","數位繪圖、影音與排版","模型／樣品與材料製作","修改、簡報與作品集"],
+  path:["視傳、數媒、產品、室設、工藝系","設計／美編／繪圖助理","影音與數位內容","室內木作、家具與工藝製作"],
+  tip:"設計群重視為需求解決問題；藝術群更著重創作、展演與藝術專業。"},
+ ee:{type:"工業類",tag:"從供電、控制到電路與資訊設備，讓系統可靠運作",keys:["供電","控制","資訊"],fit:"喜歡把系統接起來、量測、除錯，而不只是使用3C。",
+  learn:["電工與電力設備","電子電路與PCB","PLC、感測與自動控制","電腦硬體、網路與程式"],
+  skills:["配線與電路量測","製作與測試電子模組","控制程式與系統除錯","設備維運與故障排除"],
+  path:["電機、電子、資訊、自動化系","電力／機電設備維護","電子製造與測試","IT支援、通訊與冷凍空調"],
+  tip:"孩子喜歡「用電設備」的哪一部分——電力、控制、電子零件，還是電腦網路？"},
+ mech:{type:"工業類",tag:"把設計圖變成可以運作的零件、模具與機械系統",keys:["設計","加工","量測"],fit:"喜歡拆解、精準測量，願意反覆調整作品。",
+  learn:["工程圖學與3D CAD","機械原理與材料","車銑／CNC／模具與銲接","公差、量測、品質與安全"],
+  skills:["讀圖與建模","加工、成形與組裝","尺寸檢驗","設備維護與故障判斷"],
+  path:["機械、機電、材料相關系","CNC／模具／板金技術","設備維護與智慧製造","繪圖、品保與生產管理"],
+  tip:"喜歡「畫圖」和喜歡「動手加工」的學生，可能適合不同科。"},
+ auto:{type:"工業類",tag:"理解車輛與動力設備如何運轉、安全與維修",keys:["動力","診斷","修護"],fit:"不只愛車，也願意讀電路、手冊並遵守安全程序。",
+  learn:["引擎與動力傳輸","底盤、電系與電腦診斷","液壓、工程／農業機具","油電車、電動車與安全"],
+  skills:["車輛檢查與保養","系統化故障診斷","機電整合與測試","依手冊與標準作業"],
+  path:["車輛、動力、機械相關系","汽機車與重機維修","軌道／航空／農機技術","車用電子與能源服務"],
+  tip:"愛車的孩子，先確認是否願意學電學、讀修護手冊並遵守安全規範。"},
+ chem:{type:"工業類",tag:"把化學原理轉為材料、製程與環境檢驗",keys:["實驗","製程","檢驗"],fit:"喜歡實驗、數據與標準流程，能細心遵守安全。",
+  learn:["基礎化學與分析","單元操作與製程","纖維、染整與材料","環境採樣、檢測與污染防治"],
+  skills:["實驗操作與數據紀錄","控制製程與取樣","儀器分析與品質檢查","遵守化學安全"],
+  path:["化工、材料、環境、紡織系","製程操作與品管","實驗室／環境檢測助理","循環材料與永續製造"],
+  tip:"化工群的「安全、實驗紀錄與品質」和操作技巧同樣重要。"},
+ biz:{type:"商業類",tag:"從商品、帳務、物流、資料到數位商務，學習讓組織運作",keys:["經營","資料","物流"],fit:"願意把人、商品、數據和流程組織起來。",
+  learn:["經營、行銷與顧客服務","會計、財務與商業法規","資料庫、商用軟體與電商","物流、供應鏈與國際貿易"],
+  skills:["企劃與銷售","記帳與報表核對","資料整理與數位營運","訂單、物流與商務文件"],
+  path:["商管、會計、資管、物流系","行政／會計／國貿助理","電商、門市與行銷營運","物流、船務與不動產事務"],
+  tip:"國際貿易科重視貿易實務，應用英語科重視語言專業，兩者不可混為一談。"},
+ lang:{type:"商業類",tag:"把語言能力結合商務、服務與跨文化溝通",keys:["語言","文化","溝通"],fit:"願意長期練習口語、閱讀與表達，而不只追求考高分。",
+  learn:["英／日聽說讀寫","商務書信與簡報","跨文化溝通","觀光與國際服務情境"],
+  skills:["口語接待與表達","閱讀與商務文書","跨文化協作","數位工具與資訊整理"],
+  path:["應外、外文、國際商務、觀光系","國際客服與商務助理","旅遊與服務業","搭配科技／商管的跨域職涯"],
+  tip:"語言是可跨域的能力，鼓勵搭配商管、科技、觀光等第二專長。"},
+ home:{type:"家事類",tag:"以生活、照顧、服飾與美感提升人們的日常品質",keys:["生活","美感","照護"],fit:"重視細節、美感、服務與照護責任；不受性別刻板限制。",
+  learn:["生活應用與家務管理","服裝設計、打版與縫製","美容、髮妝與整體造型","幼兒發展與照顧服務"],
+  skills:["服裝／造型製作","美容與顧客服務","活動設計與溝通","基本照護與生活支持"],
+  path:["家政、時尚、美容、幼保、長照系","服裝／造型／美容助理","托育與幼兒活動相關","照顧服務與生活產業"],
+  tip:"家政群各科差異大：時尚造型偏美容美髮，幼兒保育偏照顧幼兒，照顧服務偏長者照護，要看清楚是哪一科。"},
+ hosp:{type:"家事類",tag:"把食物、旅遊與服務串成有品質的顧客體驗",keys:["餐飲","旅遊","服務"],fit:"喜歡忙碌現場、服務他人，能持續練習並接受輪班。",
+  learn:["中西餐、烘焙與飲調","餐飲服務與餐廳營運","旅館接待與觀光資源","成本、食安與顧客關係"],
+  skills:["備料與標準製餐","餐服、接待與客訴處理","行程規劃與旅遊文書","團隊協作與現場應變"],
+  path:["餐旅、觀光、休閒相關系","廚務、餐服與烘焙","旅宿接待與旅遊服務","餐飲／旅館營運"],
+  tip:"喜歡烹調、餐飲服務和規劃旅遊是三種不同偏好；選科前要辨別。"},
+ food:{type:"農業類",tag:"從食材加工到食品安全，讓產品美味、穩定而安全",keys:["加工","食安","品質"],fit:"不只愛做料理，也喜歡配方、保存、衛生與穩定品質。",
+  learn:["食品化學與微生物","加工、保存與包裝","配方、烘焙與量產","食品安全、標示與品質"],
+  skills:["依配方穩定製作","操作加工設備","檢驗與製程紀錄","衛生、包裝與品質管控"],
+  path:["食品科學、生技、餐飲相關系","食品產線與製程助理","品管／檢驗助理","烘焙與產品研發助理"],
+  tip:"餐旅的重點通常是現場餐飲服務；食品偏重製程、保存與食安。"},
+ agri:{type:"農業類",tag:"以動植物、土地與環境為場域，發展永續生產技術",keys:["生產","生態","永續"],fit:"喜歡戶外、動植物與長期照護，能接受髒、累與季節性。",
+  learn:["作物、園藝與設施栽培","森林、生態與保育","畜產營養與動物照護","智慧農業、農機與農場經營"],
+  skills:["栽培與育苗","動植物觀察與照護","農場／景觀維護","感測、紀錄與經營規劃"],
+  path:["農藝、園藝、森林、動科、景觀系","農場與園藝生產","景觀、保育與休閒農業","茶業、寵物與農產服務"],
+  tip:"學生喜歡的是植物栽培、動物照護、戶外生態，還是景觀美學？"}
+};
+/* 看似相近，其實不同（新竹區兩邊都有開的組合，以及常見的追問） */
+const COMPARE={
+ food:{with:"hosp",me:"製程、保存、食安與穩定品質",other:"現場製餐、服務與顧客體驗",ask:"喜歡做蛋糕的孩子：喜歡的是配方與食安，還是現場烹調、擺盤與服務？"},
+ hosp:{with:"food",me:"現場製餐、服務與顧客體驗",other:"製程、保存、食安與穩定品質",ask:"喜歡做蛋糕的孩子：喜歡的是現場烹調、擺盤與服務，還是配方與食安？"},
+ biz:{with:"lang",me:"國際貿易科：進出口流程、單據與商務",other:"應用英語科：語言、文化與情境溝通"},
+ lang:{with:"biz",me:"應用英語科：語言、文化與情境溝通",other:"國際貿易科：進出口流程、單據與商務"},
+ ee:{ask:"喜歡打電動、修電腦的孩子：喜歡的是硬體排錯、寫程式、剪影片，還是遊戲本身？"},
+ des:{ask:"喜歡畫畫的孩子：喜歡的是解決需求、做空間模型、畫動畫，還是自由創作與展演？"}
+};
+/* 用動詞找群科：學生願意反覆做的動作，通常更接近真實適性 */
+const VERBS=[
+ {v:"設計",cats:["des","home"],q:"喜歡想點子、畫出來，做出好看又好用的東西"},
+ {v:"製作",cats:["mech","food","hosp"],q:"喜歡照著步驟，親手把東西做出來"},
+ {v:"維修",cats:["auto","ee"],q:"喜歡拆開來看，找出哪裡壞掉並修好"},
+ {v:"分析",cats:["chem","food","biz"],q:"喜歡數據、實驗、整理資料"},
+ {v:"照顧",cats:["home","agri"],q:"喜歡照顧人、動物或植物"},
+ {v:"服務",cats:["hosp","biz","home"],q:"喜歡接待客人，幫別人解決需要"},
+ {v:"溝通",cats:["lang","biz","hosp"],q:"喜歡說話、表達，和不同的人交流"},
+ {v:"表演",cats:["home","des"],q:"喜歡在人前呈現、做造型或影音作品"},
+ {v:"讀書",cats:["gen","comp"],q:"喜歡讀書學學科知識，或還想多試探再決定"}
+];
+/* 產業特殊需求類科（新竹區本次開缺中的科別） */
+const CHANYE=new Set(["板金科","照顧服務科","園藝科","畜產保健科"]);
+const CHANYE_TIP="產業特殊需求類科：國教署依技術傳承、人力需求、投資成本與產業發展指定的科別。";
+const cyTag=d=>CHANYE.has(d)?` <span class="cy" title="${CHANYE_TIP}">產特</span>`:"";
+
 const catOf=(g,d)=>g==="學術群"?(d==="綜合高中"?"comp":"gen"):CATS.find(c=>c.name===g).id;
 const CAT=Object.fromEntries(CATS.map(c=>[c.id,c]));
 
@@ -786,7 +972,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&isFull())setFull(fa
 /* 全螢幕時，底部的小卡顯示選到的學校或群別 */
 const miniEl=document.getElementById("mini");
 function renderMini(){
-  const show=isFull()&&(state.school||state.cat);
+  const show=isFull()&&(state.school||state.cat||state.verb!==null);
   miniEl.hidden=!show;mapbox.classList.toggle("has-mini",!!show);if(!show)return;
   if(state.school){const s=BYNAME[state.school],ns=nearestStation(s.lat,s.lng);
     miniEl.innerHTML=`<h4>${s.name}</h4>
@@ -794,9 +980,12 @@ function renderMini(){
       <p>${home?`離家直線 ${fmtKm(km(s))}・`:""}最近車站：${ns.s.name}站（${fmtKm(ns.d)}）</p>
       <p>🚌 校車資訊請參考該校網站</p>
       <div class="acts"><button class="primary" type="button" id="miniMore">看科別與名額</button><a href="${siteOf(s.name)}" target="_blank" rel="noopener">學校官網 ↗</a>${home?`<a href="${route(s,"transit")}" target="_blank" rel="noopener">查路線 ↗</a>`:""}</div>`}
+  else if(!state.cat){const v=VERBS[state.verb],n=new Set(ROWS.filter(matchRow).map(r=>r.s)).size;
+    miniEl.innerHTML=`<h4>喜歡「${v.v}」</h4><p>${v.cats.map(id=>CAT[id].name).join("、")}，共 ${n} 所學校。</p>
+      <div class="acts"><button class="primary" type="button" id="miniMore">看群科介紹</button></div>`}
   else{const c=CAT[state.cat],n=new Set(ROWS.filter(matchRow).map(r=>r.s)).size;
-    miniEl.innerHTML=`<h4 style="color:${c.c}">${c.name}</h4><p>${n} 所學校開設，點有顏色的學校看細節。</p>
-      <div class="acts"><button class="primary" type="button" id="miniMore">看學校清單</button></div>`}
+    miniEl.innerHTML=`<h4 style="color:${c.c}">${c.name}</h4><p>${GUIDE[state.cat].tag}</p><p>${n} 所學校開設，點有顏色的學校看細節。</p>
+      <div class="acts"><button class="primary" type="button" id="miniMore">看群科介紹與學校</button></div>`}
   document.getElementById("miniMore").onclick=()=>{setFull(false);document.getElementById("panel").scrollIntoView({behavior:"smooth",block:"start"})}}
 document.getElementById("railBtn").onclick=e=>{showRail=!showRail;e.currentTarget.setAttribute("aria-pressed",showRail);railG.style.display=stationG.style.display=showRail?"":"none"};
 const inCity=s=>s.lng>120.95&&s.lng<121.0&&s.lat>24.785&&s.lat<24.815;
@@ -825,7 +1014,7 @@ function setPill(s,dist){const g=nodes[s.name].lbl,t=g.querySelector("text"),r=g
 let distLabels=[];
 function drawHomeLines(act){
   homeLineG.innerHTML="";distLabels=[];SC.forEach(x=>setPill(x,null));if(!home)return;
-  const[hx,hy]=P(home.lng,home.lat);const filtering=state.cat||state.q;
+  const[hx,hy]=P(home.lng,home.lat);const filtering=state.cat||state.q||state.verb!==null;
   SC.forEach(s=>{if(filtering&&!act.has(s.name))return;
     const line=el("line",{class:"distline",x1:hx,y1:hy,x2:s.x,y2:s.y,stroke:"#ffffff","stroke-width":1.4,"stroke-dasharray":"4 6","stroke-linecap":"round","vector-effect":"non-scaling-stroke",opacity:.55},homeLineG);
     // 把距離併進校名標籤：「光復高中｜4.3 km」
@@ -834,9 +1023,10 @@ function drawHomeLines(act){
 }
 
 /* 狀態與篩選 */
-const state={cat:null,q:"",school:null};
+const state={cat:null,q:"",school:null,verb:null};
 function matchRow(r){
   if(state.cat&&r.cat!==state.cat)return false;
+  if(state.verb!==null&&!VERBS[state.verb].cats.includes(r.cat))return false;
   if(state.q){const q=state.q;const s=BYNAME[r.s];
     return (r.s+r.d+r.g+CAT[r.cat].name+s.town+(r.note||"")).includes(q)}
   return true}
@@ -958,9 +1148,9 @@ function homeSummary(){
 }
 
 function render(){
-  const act=activeSchools();const filtering=state.cat||state.q;
+  const act=activeSchools();const filtering=state.cat||state.q||state.verb!==null;
   SC.forEach(s=>{const n=nodes[s.name].g;n.classList.toggle("dim",filtering&&!act.has(s.name));n.classList.toggle("lit",!!filtering&&act.has(s.name));n.classList.toggle("sel",state.school===s.name)});
-  svg.style.setProperty("--lit",state.cat?CAT[state.cat].c:"#ffd36b");
+  svg.style.setProperty("--lit",state.cat?CAT[state.cat].c:state.verb!==null?"#ff8a4c":"#ffd36b");
   // 有選學校或群別時，學校放在車站上層，亮起來的學校不會被車站蓋住
   svg.insertBefore(filtering||state.school?schoolG:stationG,houseG);
   svg.classList.toggle("has-sel",!!state.school);
@@ -985,27 +1175,30 @@ function drawLinks(act){
 const chipsEl=document.getElementById("chips");
 CATS.forEach(c=>{c.total=ROWS.filter(r=>r.cat===c.id).reduce((a,r)=>a+r.n,0);
   const b=document.createElement("button");b.type="button";b.className="chip";b.style.setProperty("--c",c.c);b.dataset.cat=c.id;
-  b.innerHTML=`<i></i>${c.name}<em>${c.total}</em>`;b.onclick=()=>{state.cat=state.cat===c.id?null:c.id;state.school=null;render()};chipsEl.appendChild(b)});
+  b.innerHTML=`<i></i>${c.name}<em>${c.total}</em>`;b.onclick=()=>{state.cat=state.cat===c.id?null:c.id;state.verb=null;state.school=null;render()};chipsEl.appendChild(b)});
 const catSel=document.getElementById("catSel");
 CATS.forEach(c=>{const o=document.createElement("option");o.value=c.id;o.textContent=`${c.name}（${c.total} 名）`;catSel.appendChild(o)});
-catSel.onchange=()=>{state.cat=catSel.value||null;state.school=null;render()};
-function renderChips(){chipsEl.querySelectorAll(".chip").forEach(b=>b.setAttribute("aria-pressed",b.dataset.cat===state.cat));catSel.value=state.cat||""}
+catSel.onchange=()=>{state.cat=catSel.value||null;state.verb=null;state.school=null;render()};
+const verbsEl=document.getElementById("verbs");
+VERBS.forEach((x,i)=>{const b=document.createElement("button");b.type="button";b.className="verb";b.dataset.v=i;b.textContent=x.v;b.title=x.q;
+  b.onclick=()=>{state.verb=state.verb===i?null:i;state.cat=null;state.school=null;render()};verbsEl.appendChild(b)});
+function renderChips(){verbsEl.querySelectorAll(".verb").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.v===state.verb));chipsEl.querySelectorAll(".chip").forEach(b=>b.setAttribute("aria-pressed",b.dataset.cat===state.cat));catSel.value=state.cat||""}
 
 /* 名額表 */
 function renderTable(){
   let rows=ROWS.filter(matchRow);if(state.school)rows=rows.filter(r=>r.s===state.school);
   if(home)rows=[...rows].sort((a,b)=>km(BYNAME[a.s])-km(BYNAME[b.s]));
-  const t=state.school?state.school:state.cat?CAT[state.cat].name:state.q?`搜尋「${state.q}」`:"全部開缺科別";
+  const t=state.school?state.school:state.cat?CAT[state.cat].name:state.verb!==null?`喜歡「${VERBS[state.verb].v}」`:state.q?`搜尋「${state.q}」`:"全部開缺科別";
   const sum=rows.reduce((a,r)=>a+r.n,0);
   document.getElementById("tblTitle").textContent=`${t}｜${rows.length} 個科別、${sum} 個名額`;
-  document.getElementById("tbody").innerHTML=rows.map(r=>`<tr class="clk" data-s="${r.s}"><td><span class="gdot" style="background:${CAT[r.cat].c}"></span>${CAT[r.cat].name}</td><td>${r.d}</td><td><a class="link" href="${siteOf(r.s)}" target="_blank" rel="noopener" title="${SITES[r.s]?"前往學校官網":"搜尋學校官網"}">${r.s}</a></td><td>${BYNAME[r.s].town}</td>${home?`<td class="n">${fmtKm(km(BYNAME[r.s]))}</td>`:""}<td class="n">${r.n}</td><td>${r.note}</td></tr>`).join("")||`<tr><td colspan="7">沒有符合的科別，換個群別試試。</td></tr>`;
+  document.getElementById("tbody").innerHTML=rows.map(r=>`<tr class="clk" data-s="${r.s}"><td><span class="gdot" style="background:${CAT[r.cat].c}"></span>${CAT[r.cat].name}</td><td>${r.d}</td><td><a class="link" href="${siteOf(r.s)}" target="_blank" rel="noopener" title="${SITES[r.s]?"前往學校官網":"搜尋學校官網"}">${r.s}</a></td><td>${BYNAME[r.s].town}</td>${home?`<td class="n">${fmtKm(km(BYNAME[r.s]))}</td>`:""}<td class="n">${r.n}</td><td>${[r.note,CHANYE.has(r.d)?`<span class="cy" title="${CHANYE_TIP}">產特</span>`:""].filter(Boolean).join(" ")}</td></tr>`).join("")||`<tr><td colspan="7">沒有符合的科別，換個群別試試。</td></tr>`;
   document.querySelectorAll("#tbody tr.clk").forEach(tr=>tr.onclick=e=>{if(e.target.closest("a"))return;selectSchool(tr.dataset.s);document.querySelector(".mapbox").scrollIntoView({behavior:"smooth",block:"start"})});
 }
 
 /* 說明卡 */
 const panel=document.getElementById("panel");
 const gmap=n=>`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(n.replace(/^(國立|私立|市立|縣立)/,"新竹 "))}`;
-function deptRows(rows,max){return `<div class="dept">${rows.map(r=>`<span class="dot" style="background:${CAT[r.cat].c}"></span><span>${r.d}${r.note?` <small>（${r.note}）</small>`:""}<br><small>${CAT[r.cat].name}</small></span><b>${r.n} 名</b><div class="bar"><span style="width:${r.n/max*100}%;background:${CAT[r.cat].c}"></span></div>`).join("")}</div>`}
+function deptRows(rows,max){return `<div class="dept">${rows.map(r=>`<span class="dot" style="background:${CAT[r.cat].c}"></span><span>${r.d}${cyTag(r.d)}${r.note?` <small>（${r.note}）</small>`:""}<br><button type="button" class="to-cat" data-cat="${r.cat}">${CAT[r.cat].name}｜認識這一群 →</button></span><b>${r.n} 名</b><div class="bar"><span style="width:${r.n/max*100}%;background:${CAT[r.cat].c}"></span></div>`).join("")}</div>`}
 function schoolList(list,val){return `<div class="list">${byDist(list).map(([s,v])=>`<button class="row-btn" type="button" data-s="${s}"><span>${s}</span><span>${val(v)}${home?`・${fmtKm(km(BYNAME[s]))}`:""}</span></button>`).join("")}</div>`}
 function bindList(){panel.querySelectorAll(".row-btn").forEach(b=>b.onclick=()=>selectSchool(b.dataset.s))}
 
@@ -1025,28 +1218,54 @@ function renderPanel(act){
       ${(()=>{const ns=nearestStation(s.lat,s.lng);return `<p class="note" style="color:var(--fg)">最近的火車站：<b>${ns.s.name}站</b>，直線 ${fmtKm(ns.d)}${ns.d<=1.2?"，步行可到":ns.d<=3?"，可轉乘公車或騎車":"，需轉乘公車或接送"}</p>`})()}
       <p class="bus-note">🚌 可參考<a href="${siteOf(s.name)}" target="_blank" rel="noopener">該校網站</a>瀏覽校車相關資訊</p>
       ${s.pending?`<p class="note" style="color:var(--fg)">這是 116 學年新設立的學校，目前不在本次適性輔導安置的名額表中，還不確定是否會開缺。先標在地圖上，方便家長認識位置。</p>`:deptRows(rows,max)}
+      ${rows.some(r=>CHANYE.has(r.d))?`<p class="note">「產特」＝${CHANYE_TIP}</p>`:""}
       <div class="routes"><a href="${siteOf(s.name)}" target="_blank" rel="noopener">${SITES[s.name]?"前往學校官網 ↗":"搜尋學校官網 ↗"}</a><a href="${gmap(s.name)}" target="_blank" rel="noopener">在 Google 地圖看位置 ↗</a></div>
       ${Object.keys(sameMap).length?`<div><div class="eyebrow" style="margin-bottom:4px">同科別也開在</div>${Object.entries(sameMap).map(([d,ss])=>`<p class="note"><b>${d}</b>：${ss.map(x=>`<a href="#" class="link" data-s="${x}">${BYNAME[x].short}</a>`).join("、")}</p>`).join("")}</div>`:""}
       <button class="btn" type="button" id="back">← 回到總覽</button>
       <a href="#report" class="link" id="repThis" style="font-size:.88rem">回報這所學校的資料錯誤</a>`;
+    panel.querySelectorAll(".to-cat").forEach(x=>x.onclick=()=>{state.cat=x.dataset.cat;state.verb=null;state.school=null;render();panel.scrollIntoView({behavior:"smooth",block:"nearest"})});
     document.getElementById("repThis").onclick=e=>{e.preventDefault();repSchool.value=s.name;repUpdate();document.getElementById("report").scrollIntoView({behavior:"smooth",block:"start"});document.getElementById("repMsg").focus({preventScroll:true})};
     panel.querySelectorAll("a[data-s]").forEach(a=>a.onclick=e=>{e.preventDefault();selectSchool(a.dataset.s)});
     document.getElementById("back").onclick=()=>{state.school=null;render()};
     return}
-  if(state.cat){const c=CAT[state.cat];
+  if(state.cat){const c=CAT[state.cat],gd=GUIDE[state.cat];
     const rows=ROWS.filter(matchRow);const per={};rows.forEach(r=>per[r.s]=(per[r.s]||0)+r.n);
-    const depts=[...new Set(rows.map(r=>r.d))];
-    panel.innerHTML=`<div class="eyebrow">群別</div><h2 style="color:${c.c}">${c.name}</h2><p class="note" style="color:var(--fg)">${c.about}</p>
-      <div class="meta">${depts.map(d=>`<span class="tag">${d}</span>`).join("")}</div>
-      <p class="note">地圖上有顏色的就是開設這一群的學校，其他學校會變灰。點學校看細節。</p>
-      ${schoolList(Object.entries(per).sort((a,b)=>b[1]-a[1]),v=>v+" 名")}`;
+    const depts=[...new Set(rows.map(r=>r.d))];const cp=COMPARE[state.cat];
+    panel.innerHTML=`<div class="eyebrow">${gd.type}</div><h2 style="color:${c.c}">${c.name}</h2>
+      <p class="g-tag">${gd.tag}</p>
+      <div class="g-keys">${gd.keys.map(k=>`<span style="--c:${c.c}">${k}</span>`).join("")}</div>
+      <div class="g-fit"><b>適合的孩子</b>${gd.fit}</div>
+      <div class="g-tabs" role="tablist">${[["learn","學什麼"],["skills","會什麼"],["path","往哪裡走"]].map(([k,t],i)=>`<button type="button" role="tab" data-gt="${k}" aria-selected="${i===0}">${t}</button>`).join("")}</div>
+      <ul class="g-list" id="gList">${gd.learn.map(x=>`<li>${x}</li>`).join("")}</ul>
+      <div class="g-tip">💡 ${gd.tip}</div>
+      ${cp?`<div class="g-cmp"><b>看似相近，其實不同</b>${cp.with?`<div class="cmp-row"><span style="--c:${c.c}">${c.name}</span><em>${cp.me}</em></div><div class="cmp-ne">≠</div><div class="cmp-row"><button type="button" class="cmp-go" data-cat="${cp.with}" style="--c:${CAT[cp.with].c}">${CAT[cp.with].name} →</button><em>${cp.other}</em></div>`:""}${cp.ask?`<p>追問：${cp.ask}</p>`:""}</div>`:""}
+      <div class="eyebrow" style="margin-top:4px">新竹區這一群開的科別</div>
+      <div class="meta">${depts.map(d=>`<span class="tag">${d}${cyTag(d)}</span>`).join("")}</div>
+      ${depts.some(d=>CHANYE.has(d))?`<p class="note">「產特」＝${CHANYE_TIP}</p>`:""}
+      <div class="eyebrow">開設的學校（點了看位置）</div>
+      ${schoolList(Object.entries(per).sort((a,b)=>b[1]-a[1]),v=>v+" 名")}
+      ${gd.own?`<p class="note">普通科、綜合高中的介紹為本站補充整理。</p>`:""}`;
+    panel.querySelectorAll("[data-gt]").forEach(t=>t.onclick=()=>{panel.querySelectorAll("[data-gt]").forEach(x=>x.setAttribute("aria-selected",x===t));
+      document.getElementById("gList").innerHTML=gd[t.dataset.gt].map(x=>`<li>${x}</li>`).join("")});
+    panel.querySelectorAll(".cmp-go").forEach(x=>x.onclick=()=>{state.cat=x.dataset.cat;state.school=null;render()});
     bindList();return}
+  if(state.verb!==null){const vb_=VERBS[state.verb];
+    const rows=ROWS.filter(matchRow);const per={};rows.forEach(r=>per[r.s]=(per[r.s]||0)+r.n);
+    panel.innerHTML=`<div class="eyebrow">用喜歡做的事找群科</div><h2>喜歡「${vb_.v}」</h2>
+      <p class="g-tag">${vb_.q}</p>
+      <div class="eyebrow">可以看看這幾群</div>
+      <div class="v-cats">${vb_.cats.map(id=>{const c=CAT[id],gd=GUIDE[id],n=new Set(ROWS.filter(r=>r.cat===id).map(r=>r.s)).size;
+        return `<button type="button" class="v-cat" data-cat="${id}" style="--c:${c.c}"><b>${c.name}</b><span>${gd.tag}</span><small>新竹區 ${n} 所學校・${c.total} 名</small></button>`}).join("")}</div>
+      <p class="note">地圖上亮起來的就是開設這幾群的學校。點上面的群別，看它學什麼、會什麼、往哪裡走。</p>
+      <div class="g-tip">💡 先找孩子願意反覆做的「動作」，再看他喜歡的場域：工廠、實驗室、戶外、服務現場、工作室或辦公室。</div>`;
+    panel.querySelectorAll(".v-cat").forEach(x=>x.onclick=()=>{state.cat=x.dataset.cat;state.verb=null;state.school=null;render()});
+    return}
   if(state.q){const rows=ROWS.filter(matchRow);const per={};rows.forEach(r=>per[r.s]=(per[r.s]||0)+r.n);
     panel.innerHTML=`<div class="eyebrow">搜尋結果</div><h2>「${state.q}」</h2><p class="note">${Object.keys(per).length} 所學校、${rows.length} 個科別符合。</p>${schoolList(Object.entries(per).sort((a,b)=>b[1]-a[1]),v=>v+" 名")}`;
     bindList();return}
   // 總覽
   const max=Math.max(...CATS.map(c=>c.total));
-  panel.innerHTML=`<div class="eyebrow">怎麼看這座島</div><h2>點一所學校，或選一個群別</h2>
+  panel.innerHTML=`<div class="eyebrow">怎麼看這張地圖</div><h2>點一所學校，或選一個群別</h2>
     <p class="note" style="color:var(--fg)">每個圓圈是一所學校，中間是學校簡稱，圓圈越大代表安置名額越多，外圈顏色是各群所占比例。選群別後，沒有開這一群的學校會變灰。</p>
     <div class="dept">${[...CATS].sort((a,b)=>b.total-a.total).map(c=>`<span class="dot" style="background:${c.c}"></span><span>${c.name}</span><b>${c.total}</b><div class="bar"><span style="width:${c.total/max*100}%;background:${c.c}"></span></div>`).join("")}</div>
     <p class="note">標示「限男生／限女生」的科別只安置該性別學生。</p>
@@ -1065,7 +1284,7 @@ function showBoat(){state.school=null;panel.innerHTML=`<div class="eyebrow">你�
 
 /* 搜尋 */
 {const rb=document.createElement("button");rb.type="button";rb.id="reset";rb.className="chip-reset";rb.textContent="↺ 顯示全部";document.getElementById("chips").appendChild(rb)}
-document.getElementById("reset").onclick=()=>{state.cat=null;state.q="";state.school=null;setView("all");render()};
+document.getElementById("reset").onclick=()=>{state.cat=null;state.q="";state.verb=null;state.school=null;setView("all");render()};
 svg.addEventListener("click",e=>{if(dragGuard())return;if(pinMode){placePin(e);return}if(state.school){state.school=null;render()}});
 
 /* ===== 錯誤回報：組成 Email，郵件程式開不了時可複製 ===== */
