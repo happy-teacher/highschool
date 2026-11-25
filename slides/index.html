@@ -91,7 +91,7 @@ b.hl{background:linear-gradient(transparent 58%,#ffd9a8 58%);font-weight:700}
 .step p{font-size:18px;line-height:1.5}
 
 /* task cards */
-.task{background:#fff;border-radius:18px;padding:18px 20px;border:1.5px solid var(--line);border-top:8px solid var(--c);display:flex;flex-direction:column}
+.task{background:#fff;border-radius:18px;padding:18px 20px;border:1.5px solid var(--line);display:flex;flex-direction:column}
 .task .who{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}
 .task .letter{font-family:var(--f-display);font-size:30px;color:var(--c)}
 .task .area{font-size:15px;font-weight:700;padding:2px 10px;border-radius:999px;background:color-mix(in srgb,var(--c) 14%,#fff);color:var(--c)}
@@ -108,7 +108,7 @@ b.hl{background:linear-gradient(transparent 58%,#ffd9a8 58%);font-weight:700}
 /* qa */
 .q-big{font-family:var(--f-display);font-size:38px;line-height:1.35;margin-bottom:22px}
 .q-big::before{content:"Q";display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:16px;background:var(--warm);color:#fff;margin-right:16px;font-size:32px;vertical-align:middle}
-.answer{background:#fff;border-left:8px solid var(--accent);border-radius:14px;padding:20px 26px;font-size:24px;line-height:1.6;margin-bottom:18px}
+.answer{background:#fff;border-radius:14px;padding:20px 26px;font-size:24px;line-height:1.6;margin-bottom:18px}
 .cmp{display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:18px;overflow:hidden;border:1.5px solid var(--line)}
 .cmp div{padding:16px 22px;font-size:20px;line-height:1.5;background:#fff;border-bottom:1px solid var(--line)}
 .cmp .h{font-family:var(--f-display);font-size:22px;background:var(--accent-soft);color:var(--accent)}
@@ -193,25 +193,58 @@ a.url.big .u{font-size:22px} a.url.big{padding:10px 10px 10px 22px}
 .lot button.ghost{background:#fff;color:var(--warm)}
 /* adapt */
 .adapt{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.adapt .card{border-top:10px solid var(--c);display:flex;flex-direction:column}
+.adapt .card{display:flex;flex-direction:column}
 .adapt .face{font-size:46px;line-height:1}
 .adapt h3{font-size:24px;margin:10px 0 8px;color:var(--c)}
 .adapt li{font-size:19px;line-height:1.5}
 .timeline{display:block;max-height:430px;max-width:100%;margin:0 auto;border-radius:14px;border:1.5px solid var(--line);background:#fff}
 
 /* discussion */
-.dq{background:#fff;border:1.5px solid var(--line);border-left:8px solid var(--c);border-radius:14px;padding:10px 18px;margin-bottom:10px}
+.dq{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:10px 18px;margin-bottom:10px}
 .dqt{font-size:20px;font-weight:700;margin-bottom:6px}
 .opts{display:flex;flex-wrap:wrap;gap:8px}
 .opt{font-size:17px;padding:5px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--chip);transition:all .3s}
 .disc.show .opt.ok{background:#2e9e4f;border-color:#2e9e4f;color:#fff;font-weight:700}
 .disc.show .opt.ok::before{content:"✓ "}
 .disc.show .opt:not(.ok){opacity:.45}
-.ex{font-size:16.5px;color:var(--muted);margin-top:6px;line-height:1.45;display:none}
-.disc.show .ex{display:block}
+.dex{font-size:16.5px;color:var(--muted);margin-top:6px;line-height:1.45;display:none}
+.disc.show .dex{display:block}
 .dtalk{margin-top:auto;background:#fff8ea;border:2px dashed var(--gold);border-radius:14px;padding:10px 18px;font-size:19px;line-height:1.5}
 button.reveal{margin-left:auto;font-family:var(--f-display);font-size:20px;padding:8px 22px;border-radius:999px;border:2px solid var(--c);background:#fff;color:var(--c);cursor:pointer}
 .disc.show button.reveal{background:var(--c);color:#fff}
+
+/* ===== 設計原則調整：白底內容頁、無邊條、色塊底與圓形圖示 ===== */
+:root{--bg:#ffffff;--tint:#eef7f9;--tint-w:#fdf0e8}
+.slide:not(.cover):not(.section)::after{display:none}
+.kicker{display:flex;align-items:center;gap:10px}
+.kicker::before{content:"";width:14px;height:14px;border-radius:50%;background:var(--warm);flex:none}
+.cover .kicker::before,.section .kicker::before{background:#ffd9a8}
+.card{border:none;background:var(--tint);box-shadow:none}
+.answer{border-left:none;background:var(--tint);border-radius:16px}
+.check li{border:none;background:var(--tint)}
+.ag{border:none;background:var(--tint)}
+.ag.hot{border:none;background:var(--tint-w)}
+.step{border:none;background:var(--tint)}
+.task{border:none;border-top:none;background:color-mix(in srgb,var(--c) 9%,#fff)}
+.task .letter{width:44px;height:44px;border-radius:50%;background:var(--c);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:24px}
+.task .q{border-top:1px dashed color-mix(in srgb,var(--c) 35%,#fff)}
+.dq{border:none;background:color-mix(in srgb,var(--c) 8%,#fff)}
+.adapt .card{border-top:none;background:color-mix(in srgb,var(--c) 10%,#fff)}
+.adapt .face{width:68px;height:68px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:36px}
+.cmp{border:none}
+.cmp div{background:var(--tint);border-color:#fff}
+.cmp .h{background:var(--accent);color:#fff}.cmp .h.w{background:var(--warm);color:#fff}
+table.pts,table.ex{border:none;background:var(--tint)}
+table.pts td,table.ex td{border-bottom:1px solid #fff}
+table.pts td.g{background:#d3eef4}
+a.url{border:none;background:var(--tint);box-shadow:none}
+a.url:hover{background:#e0f1f5}
+.thumb{border:none}
+.dtalk{border:none;background:var(--tint-w)}
+.q-big::before{border-radius:50%}
+.step .n{box-shadow:0 0 0 6px #fff}
+.lot textarea{border:none;background:var(--tint)}
+.opt{border:none;background:#fff}
 @media print{
   html,body{overflow:visible;background:#fff}
   #viewport{position:static;display:block}
@@ -267,8 +300,8 @@ button.reveal{margin-left:auto;font-family:var(--f-display);font-size:20px;paddi
   <h2>去年我的作法</h2>
   <p class="muted" style="margin-top:-14px;margin-bottom:20px">用 Google 協作平台，把升學管道、期程、表件與問答整理在同一個網站，給家長隨時查。</p>
   <div class="grid2" style="margin-bottom:18px">
-    <div class="card" style="border-top:8px solid var(--accent)"><span class="tag">路徑一</span><h3>一般入學管道</h3><p>免試入學，與一般生相同的入學方式。</p></div>
-    <div class="card" style="border-top:8px solid var(--warm)"><span class="tag w">路徑二</span><h3>適性輔導安置管道</h3><p>依安置簡章，由鑑輔會安置到高級中等學校。</p></div>
+    <div class="card" ><span class="tag">路徑一</span><h3>一般入學管道</h3><p>免試入學，與一般生相同的入學方式。</p></div>
+    <div class="card" ><span class="tag w">路徑二</span><h3>適性輔導安置管道</h3><p>依安置簡章，由鑑輔會安置到高級中等學校。</p></div>
   </div>
   <p class="small muted" style="margin-bottom:8px">網站五個頁面</p>
   <div class="row" style="flex-wrap:wrap;gap:10px;margin-bottom:22px">
@@ -504,21 +537,21 @@ button.reveal{margin-left:auto;font-family:var(--f-display);font-size:20px;paddi
 <section class="slide disc" data-title="作答後討論 A" style="padding-top:40px;--c:#e89a0c">
   <div class="kicker">作答後討論・案例 A</div>
   <div class="row" style="align-items:center;gap:16px;margin-bottom:14px"><h2 style="font-size:34px;margin:0"><span style="color:#e89a0c">A</span> 小宇・湖口鄉中山路一段722號・電機與電子群</h2><button type="button" class="reveal">公布答案</button></div>
-  <div class="dq"><p class="dqt">A1. 離小宇家最近的 3 所「電機與電子群」學校？（選 3 所）</p><div class="opts"><span class="opt ok">私立義民高中</span><span class="opt ok">國立陽明交大附中</span><span class="opt ok">私立內思高中</span><span class="opt">國立新竹高工</span><span class="opt">縣立湖口高中</span><span class="opt">私立光復高中</span></div><p class="ex">💡 三所都在約 6–9 km；新竹高工、光復較遠。湖口高中沒有開電機與電子群。</p></div><div class="dq"><p class="dqt">A2. 喜歡組裝電腦、架網路、寫程式，最對應哪一科？</p><div class="opts"><span class="opt ok">資訊科</span><span class="opt">電子科</span><span class="opt">電機科</span></div><p class="ex">💡 資訊＝電腦硬體、網路與程式；電子＝電子電路與 PCB；電機＝配線、電力設備與控制。</p></div><div class="dq"><p class="dqt">A3. 內思高中資訊、電子、電機科各開幾名？</p><div class="opts"><span class="opt ok">各 3 名</span><span class="opt">各 5 名</span><span class="opt">各 8 名</span></div><p class="ex">💡 三科各 3 名，名額少，要準備備案。</p></div>
+  <div class="dq"><p class="dqt">A1. 離小宇家最近的 3 所「電機與電子群」學校？（選 3 所）</p><div class="opts"><span class="opt ok">私立義民高中</span><span class="opt ok">國立陽明交大附中</span><span class="opt ok">私立內思高中</span><span class="opt">國立新竹高工</span><span class="opt">縣立湖口高中</span><span class="opt">私立光復高中</span></div><p class="dex">💡 三所都在約 6–9 km；新竹高工、光復較遠。湖口高中沒有開電機與電子群。</p></div><div class="dq"><p class="dqt">A2. 喜歡組裝電腦、架網路、寫程式，最對應哪一科？</p><div class="opts"><span class="opt ok">資訊科</span><span class="opt">電子科</span><span class="opt">電機科</span></div><p class="dex">💡 資訊＝電腦硬體、網路與程式；電子＝電子電路與 PCB；電機＝配線、電力設備與控制。</p></div><div class="dq"><p class="dqt">A3. 內思高中資訊、電子、電機科各開幾名？</p><div class="opts"><span class="opt ok">各 3 名</span><span class="opt">各 5 名</span><span class="opt">各 8 名</span></div><p class="dex">💡 三科各 3 名，名額少，要準備備案。</p></div>
   <div class="dtalk">🗣️ <b>討論：</b>湖口家附近沒有電機與電子群，最近的都要到竹北或新埔；三科的差別您會怎麼跟家長說？</div>
   <div class="notes">先請選這個案例的老師說說自己的答案與在網站上怎麼找到的，再按「公布答案」（或按鍵盤 R）。距離為「用地址定位」後的直線距離，定位結果可能略有差異，若老師的答案不同可以一起看是哪裡不一樣。</div>
 </section>
 <section class="slide disc" data-title="作答後討論 B" style="padding-top:40px;--c:#d13b3b">
   <div class="kicker">作答後討論・案例 B</div>
   <div class="row" style="align-items:center;gap:16px;margin-bottom:14px"><h2 style="font-size:34px;margin:0"><span style="color:#d13b3b">B</span> 阿哲・竹北市光明六路10號・餐旅群</h2><button type="button" class="reveal">公布答案</button></div>
-  <div class="dq"><p class="dqt">B1. 離阿哲家最近的餐旅群科別？</p><div class="opts"><span class="opt ok">私立光復高中 餐飲管理科</span><span class="opt">私立仰德高中 餐飲管理科</span><span class="opt">私立東泰高中 餐飲管理科</span><span class="opt">國立關西高中 餐飲管理科</span></div><p class="ex">💡 光復約 3.7 km；仰德約 5.9 km；東泰、關西都在 15 km 以上。</p></div><div class="dq"><p class="dqt">B2. 光復高中餐飲管理科開幾名？</p><div class="opts"><span class="opt ok">14 名</span><span class="opt">3 名</span><span class="opt">6 名</span><span class="opt">15 名</span></div><p class="ex">💡 光復高中餐飲管理科 14 名。</p></div><div class="dq"><p class="dqt">B3. 新竹區餐旅群名額最多的是哪一所？</p><div class="opts"><span class="opt ok">私立仰德高中（15 名）</span><span class="opt">私立光復高中（14 名）</span><span class="opt">私立東泰高中（6 名）</span><span class="opt">國立關西高中（3 名）</span></div><p class="ex">💡 仰德 15 名最多，離阿哲家約 5.9 km，是第二近的選擇。</p></div>
+  <div class="dq"><p class="dqt">B1. 離阿哲家最近的餐旅群科別？</p><div class="opts"><span class="opt ok">私立光復高中 餐飲管理科</span><span class="opt">私立仰德高中 餐飲管理科</span><span class="opt">私立東泰高中 餐飲管理科</span><span class="opt">國立關西高中 餐飲管理科</span></div><p class="dex">💡 光復約 3.7 km；仰德約 5.9 km；東泰、關西都在 15 km 以上。</p></div><div class="dq"><p class="dqt">B2. 光復高中餐飲管理科開幾名？</p><div class="opts"><span class="opt ok">14 名</span><span class="opt">3 名</span><span class="opt">6 名</span><span class="opt">15 名</span></div><p class="dex">💡 光復高中餐飲管理科 14 名。</p></div><div class="dq"><p class="dqt">B3. 新竹區餐旅群名額最多的是哪一所？</p><div class="opts"><span class="opt ok">私立仰德高中（15 名）</span><span class="opt">私立光復高中（14 名）</span><span class="opt">私立東泰高中（6 名）</span><span class="opt">國立關西高中（3 名）</span></div><p class="dex">💡 仰德 15 名最多，離阿哲家約 5.9 km，是第二近的選擇。</p></div>
   <div class="dtalk">🗣️ <b>討論：</b>最近的光復與名額最多的仰德都是私立學校；選填時除了距離與名額，還要和家長談什麼？</div>
   <div class="notes">先請選這個案例的老師說說自己的答案與在網站上怎麼找到的，再按「公布答案」（或按鍵盤 R）。距離為「用地址定位」後的直線距離，定位結果可能略有差異，若老師的答案不同可以一起看是哪裡不一樣。</div>
 </section>
 <section class="slide disc" data-title="作答後討論 C" style="padding-top:40px;--c:#2f6fdb">
   <div class="kicker">作答後討論・案例 C</div>
   <div class="row" style="align-items:center;gap:16px;margin-bottom:14px"><h2 style="font-size:34px;margin:0"><span style="color:#2f6fdb">C</span> 阿凱・竹北市中華路343之7號・男生・普通科</h2><button type="button" class="reveal">公布答案</button></div>
-  <div class="dq"><p class="dqt">C1. 哪些學校的普通科，阿凱「不能」選？（可複選）</p><div class="opts"><span class="opt ok">國立新竹女中</span><span class="opt ok">私立曙光女中</span><span class="opt">國立新竹高中</span><span class="opt">縣立六家高中</span><span class="opt">國立陽明交大附中</span></div><p class="ex">💡 新竹女中、曙光女中限女生；新竹高中限男生，阿凱可以選。看名額表「備註」欄。</p></div><div class="dq"><p class="dqt">C2. 離阿凱家最近的 2 所普通科？（選 2 所）</p><div class="opts"><span class="opt ok">國立陽明交大附中（23 名）</span><span class="opt ok">私立義民高中（2 名）</span><span class="opt">縣立六家高中（18 名）</span><span class="opt">市立建功高中（15 名）</span></div><p class="ex">💡 兩校都在約 1 km；其次六家高中約 3 km。義民高中普通科只有 2 名。</p></div>
+  <div class="dq"><p class="dqt">C1. 哪些學校的普通科，阿凱「不能」選？（可複選）</p><div class="opts"><span class="opt ok">國立新竹女中</span><span class="opt ok">私立曙光女中</span><span class="opt">國立新竹高中</span><span class="opt">縣立六家高中</span><span class="opt">國立陽明交大附中</span></div><p class="dex">💡 新竹女中、曙光女中限女生；新竹高中限男生，阿凱可以選。看名額表「備註」欄。</p></div><div class="dq"><p class="dqt">C2. 離阿凱家最近的 2 所普通科？（選 2 所）</p><div class="opts"><span class="opt ok">國立陽明交大附中（23 名）</span><span class="opt ok">私立義民高中（2 名）</span><span class="opt">縣立六家高中（18 名）</span><span class="opt">市立建功高中（15 名）</span></div><p class="dex">💡 兩校都在約 1 km；其次六家高中約 3 km。義民高中普通科只有 2 名。</p></div>
   <div class="dtalk">🗣️ <b>討論：</b>阿凱寫作業慢，普通科課業份量重；您會怎麼跟家長討論學習支持與高中資源班的落差？</div>
   <div class="notes">先請選這個案例的老師說說自己的答案與在網站上怎麼找到的，再按「公布答案」（或按鍵盤 R）。距離為「用地址定位」後的直線距離，定位結果可能略有差異，若老師的答案不同可以一起看是哪裡不一樣。</div>
 </section>
@@ -613,8 +646,8 @@ button.reveal{margin-left:auto;font-family:var(--f-display);font-size:20px;paddi
   <div class="kicker">高中三問・3</div>
   <div class="q-big" style="font-size:34px">念一般高中普通班，未來考大學（學測／分科測驗）還有特教身分優惠嗎？</div>
   <div class="row" style="gap:22px;align-items:stretch">
-    <div class="card" style="flex:1;border-left:8px solid var(--accent)"><h3>英聽・學測・分科測驗</h3><p>和一般生<b>完全相同</b>，<b class="hl">沒有特教生的加分優惠</b>；可申請<b>特殊應考服務</b>（依障礙狀況調整考試環境、時間或作答方式）。</p></div>
-    <div class="card" style="flex:1;border-left:8px solid var(--warm)"><h3>特考（身障甄試）</h3><p>身心障礙學生升學大專校院甄試，是<b class="hl">特教生才有的升學管道</b>。會<b>對應障礙別和類組，額外考一個考試</b>，大學組、四技二專組、二技組各有規定。</p></div>
+    <div class="card" style="flex:1;"><h3>英聽・學測・分科測驗</h3><p>和一般生<b>完全相同</b>，<b class="hl">沒有特教生的加分優惠</b>；可申請<b>特殊應考服務</b>（依障礙狀況調整考試環境、時間或作答方式）。</p></div>
+    <div class="card" style="flex:1;"><h3>特考（身障甄試）</h3><p>身心障礙學生升學大專校院甄試，是<b class="hl">特教生才有的升學管道</b>。會<b>對應障礙別和類組，額外考一個考試</b>，大學組、四技二專組、二技組各有規定。</p></div>
   </div>
   <div style="margin-top:20px">
     <p class="small muted" style="margin-bottom:8px">工具三・延伸：116學年度身障甄試 校系志願查詢（選障礙別 → 升學管道 → 類群組，查可選校系）</p>
