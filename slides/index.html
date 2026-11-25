@@ -172,6 +172,7 @@ table.ex td.hl2{color:var(--warm);font-weight:700;font-size:22px}
 .leaf{display:grid;gap:10px;margin-top:12px}
 .leaf span{display:block;border-radius:12px;padding:10px;font-family:var(--f-display);font-size:21px;color:#fff}
 
+.task li{font-size:17px;line-height:1.55}
 /* url bars */
 a.url{display:flex;align-items:center;gap:12px;background:#fff;border:2px solid var(--line);border-radius:999px;padding:8px 8px 8px 18px;text-decoration:none;color:var(--fg);box-shadow:0 4px 14px rgba(18,70,90,.10);transition:border-color .15s,transform .15s;max-width:100%}
 a.url:hover{border-color:var(--accent);transform:translateY(-2px)}
@@ -458,7 +459,7 @@ a.url.big .u{font-size:22px} a.url.big{padding:10px 10px 10px 22px}
   <h2>三位孩子，三個家庭的選擇題</h2>
   <div class="grid3">
     <div class="task" style="--c:#e89a0c;padding:24px"><div class="who"><span class="letter">A</span><span class="area">竹北湖口新豐</span></div><h3 style="font-size:26px">小宇・住湖口</h3><p style="font-size:19px">放學就拆裝舊電腦，愛研究線路；不喜歡長時間抄寫。</p><div class="q" style="font-size:18px"><b>任務：</b>找出電機與電子群中離家最近的 3 個科別，比較資訊、電子、電機科差在哪。</div></div>
-    <div class="task" style="--c:#d13b3b;padding:24px"><div class="who"><span class="letter">B</span><span class="area">竹市</span></div><h3 style="font-size:26px">阿哲・住香山</h3><p style="font-size:19px">週末會自己做便當給家人，喜歡被稱讚「好吃」。</p><div class="q" style="font-size:18px"><b>任務：</b>比較餐旅群各校的名額與距離；想一想：他是愛「做菜」，還是愛「被肯定」？</div></div>
+    <div class="task" style="--c:#d13b3b;padding:24px"><div class="who"><span class="letter">B</span><span class="area">竹東關西新埔</span></div><h3 style="font-size:26px">阿哲・住關西</h3><p style="font-size:19px">週末會自己做便當給家人，喜歡被稱讚「好吃」。</p><div class="q" style="font-size:18px"><b>任務：</b>比較餐旅群各校的名額與距離；想一想：他是愛「做菜」，還是愛「被肯定」？</div></div>
     <div class="task" style="--c:#2f6fdb;padding:24px"><div class="who"><span class="letter">C</span><span class="area">普通科</span></div><h3 style="font-size:26px">阿凱・住竹北・男生</h3><p style="font-size:19px">學科成績中上，想念大學，但寫作業速度很慢。</p><div class="q" style="font-size:18px"><b>任務：</b>篩選普通科，排除他不能選的學校；想一想要提醒家長普通科的哪些學習負荷？</div></div>
   </div>
   <div class="notes">情境人物都是虛構的。請老師自由選一位試做。</div>
@@ -480,6 +481,28 @@ a.url.big .u{font-size:22px} a.url.big{padding:10px 10px 10px 22px}
 </section>
 
 <!-- 13 分享 -->
+<section class="slide" data-title="三個案例參考答案" style="padding-top:40px">
+  <div class="kicker">三個案例・參考答案</div>
+  <h2 style="font-size:38px;margin-bottom:6px">參考答案</h2>
+  <p class="small muted" style="margin-bottom:14px">距離為地圖網站「選擇鄉鎮」後計算的離家直線距離；名額為115學年新竹區名額表。</p>
+  <div class="grid3" style="gap:16px">
+    <div class="task" style="--c:#e89a0c"><div class="who"><span class="letter">A</span><span class="area">小宇・湖口・電機與電子群</span></div>
+      <p style="font-size:17px"><b>離家最近的 3 所：</b></p>
+      <ol style="padding-left:1.2em;font-size:17px;line-height:1.55"><li>私立義民高中 資訊科｜8 名｜7.5 km</li><li>國立陽明交大附中 資訊科｜3 名｜7.7 km</li><li>私立內思高中 資訊／電子／電機科｜各 3 名｜8.3 km</li></ol>
+      <div class="q"><b>三科差異：</b>資訊＝電腦硬體、網路與程式；電子＝電子電路、PCB 與模組測試；電機＝配線、電力設備與控制。</div></div>
+    <div class="task" style="--c:#d13b3b"><div class="who"><span class="letter">B</span><span class="area">阿哲・關西・餐旅群</span></div>
+      <p style="font-size:17px"><b>餐飲管理科，由近到遠：</b></p>
+      <ol style="padding-left:1.2em;font-size:17px;line-height:1.55"><li>國立關西高中｜3 名｜1.1 km</li><li>私立東泰高中｜6 名｜11.7 km</li><li>私立光復高中｜14 名｜18.3 km</li><li>私立仰德高中｜15 名｜20.0 km</li></ol>
+      <div class="q"><b>重點：</b>最近的關西高中只有 3 名，名額最多的仰德最遠；要和家長討論通勤與備案（例如關西高中的食品加工科、家政科）。</div></div>
+    <div class="task" style="--c:#2f6fdb"><div class="who"><span class="letter">C</span><span class="area">阿凱・竹北・男生・普通科</span></div>
+      <p style="font-size:17px"><b>不能選：</b>國立新竹女中、私立曙光女中（限女生）</p>
+      <p style="font-size:17px;margin-top:4px"><b>離家最近的 3 所：</b></p>
+      <ol style="padding-left:1.2em;font-size:17px;line-height:1.55"><li>國立陽明交大附中｜23 名｜0.2 km</li><li>私立義民高中｜2 名｜0.4 km</li><li>縣立六家高中｜18 名｜3.2 km</li></ol>
+      <div class="q"><b>提醒：</b>國立新竹高中限男生，阿凱可以選。普通科課業份量重，寫作業慢要先想好學習支持。</div></div>
+  </div>
+  <div class="notes">輸入實際住址後距離會不同，這裡以選鄉鎮的結果為準。A 的三科差異整理自地圖網站「群科小百科」的電機與電子群。</div>
+</section>
+
 <section class="slide" data-title="試用心得分享">
   <div class="kicker">PART 3・心得分享</div>
   <h2>留言分享：你的試用心得</h2>
