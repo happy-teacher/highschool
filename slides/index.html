@@ -739,7 +739,7 @@ button.reveal{margin-left:auto;font-family:var(--f-display);font-size:20px;paddi
 
 
   /* ===== 回饋表單網址：建立表單後，把網址貼在下面引號中 ===== */
-  var FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScqzzldwEDPA7OE7rezMMxv6nrmydeXqDxsHxr82vwxMtzZRw/viewform';
+  var FORM_URL = 'https://forms.gle/oSVuSbSrM2TUChXx6';
   [].forEach.call(document.querySelectorAll('.formlink'),function(a){
     if(FORM_URL){a.href=FORM_URL;a.querySelector('.formtxt').textContent=FORM_URL.replace(/^https?:\/\//,'');}
     else{a.addEventListener('click',function(e){e.preventDefault();alert('尚未設定回饋表單網址');});}
